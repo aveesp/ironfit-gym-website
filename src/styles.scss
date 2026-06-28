@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap');
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body {
+    background-color: #0a0a0a;
+    color: white;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center gap-2 font-semibold px-6 py-3 rounded-lg transition-all duration-300 cursor-pointer;
+    background-color: #e60000;
+    color: white;
+    &:hover { background-color: #c20000; transform: scale(1.05); }
+    &:active { transform: scale(0.95); }
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 bg-transparent font-semibold px-6 py-3 rounded-lg transition-all duration-300 cursor-pointer;
+    border: 2px solid #e60000;
+    color: #e60000;
+    &:hover { background-color: #e60000; color: white; }
+  }
+
+  .btn-white {
+    @apply inline-flex items-center gap-2 bg-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 cursor-pointer;
+    color: #0a0a0a;
+    &:hover { background-color: #f3f4f6; }
+  }
+
+  .card {
+    background-color: #1a1a1a;
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 1px solid #2d2d2d;
+    transition: border-color 0.3s;
+    &:hover { border-color: rgba(230, 0, 0, 0.4); }
+  }
+
+  .section-title {
+    font-family: 'Oswald', Impact, sans-serif;
+    @apply text-4xl font-bold uppercase tracking-tight;
+    @screen md { font-size: 3rem; }
+  }
+
+  .input-field {
+    background-color: #222222;
+    border: 1px solid #3d3d3d;
+    @apply text-white rounded-lg px-4 py-3 w-full placeholder-gray-500 transition-all duration-200;
+    &:focus {
+      outline: none;
+      border-color: rgba(230, 0, 0, 0.6);
+      box-shadow: 0 0 0 1px rgba(230, 0, 0, 0.3);
+    }
+  }
+
+  .nav-link {
+    @apply text-gray-300 hover:text-white font-medium transition-colors duration-200;
+  }
+
+  .gradient-text {
+    background: linear-gradient(to right, #e60000, #ff6b00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 text-xs font-semibold px-3 py-1 rounded-full;
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #111; }
+::-webkit-scrollbar-thumb { background: #e60000; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #c20000; }
+
+/* Hero gradient overlay */
+.hero-overlay {
+  background: linear-gradient(135deg, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0.7) 50%, rgba(230,0,0,0.1) 100%);
+}
+
+/* BG Pattern */
+.bg-hero-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ff2323' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
