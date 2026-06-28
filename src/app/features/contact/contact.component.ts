@@ -64,6 +64,9 @@ import { CommonModule } from '@angular/common';
                       <input name="lastName" ngModel required #lastName="ngModel"
                              [class]="lastName.invalid && lastName.touched ? 'border-red-500' : ''"
                              placeholder="Doe" class="input-field">
+                      @if (lastName.invalid && lastName.touched) {
+                        <p class="text-red-400 text-xs mt-1">Last name is required</p>
+                      }
                     </div>
                   </div>
                   <div>
@@ -81,7 +84,9 @@ import { CommonModule } from '@angular/common';
                   </div>
                   <div>
                     <label class="text-gray-400 text-sm font-medium mb-2 block">Subject *</label>
-                    <select name="subject" ngModel required class="input-field">
+                    <select name="subject" ngModel required #subject="ngModel"
+                            [class]="subject.invalid && subject.touched ? 'border-red-500' : ''"
+                            class="input-field">
                       <option value="">Select a topic</option>
                       <option>General Inquiry</option>
                       <option>List My Gym</option>
@@ -90,6 +95,9 @@ import { CommonModule } from '@angular/common';
                       <option>Technical Support</option>
                       <option>Partnership</option>
                     </select>
+                    @if (subject.invalid && subject.touched) {
+                      <p class="text-red-400 text-xs mt-1">Please select a subject</p>
+                    }
                   </div>
                   <div>
                     <label class="text-gray-400 text-sm font-medium mb-2 block">Message *</label>

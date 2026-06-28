@@ -1,5 +1,5 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DataService } from '../../core/services/data.service';
@@ -49,12 +49,12 @@ import { Gym } from '../../core/models';
 
               <!-- Price Range -->
               <div class="mb-6">
-                <label class="text-gray-400 text-sm font-medium mb-2 block">Max Price: {{ '$' + maxPrice() }}/mo</label>
-                <input type="range" min="15" max="100" step="5" [value]="maxPrice()"
+                <label class="text-gray-400 text-sm font-medium mb-2 block">Max Price: ₹{{maxPrice() | number}}/mo</label>
+                <input type="range" min="1299" max="8000" step="500" [value]="maxPrice()"
                        (input)="onPriceChange($event)"
                        class="w-full accent-primary">
                 <div class="flex justify-between text-gray-500 text-xs mt-1">
-                  <span>$15</span><span>$100</span>
+                  <span>₹1,299</span><span>₹8,000</span>
                 </div>
               </div>
 
@@ -136,7 +136,7 @@ export class GymListingsComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
   searchQuery = '';
-  maxPrice = signal(100);
+  maxPrice = signal(8000);
   minRating = signal(0);
   openNowOnly = false;
   selectedTags = signal<string[]>([]);
@@ -187,7 +187,7 @@ export class GymListingsComponent implements OnInit {
 
   clearFilters() {
     this.searchQuery = '';
-    this.maxPrice.set(100);
+    this.maxPrice.set(8000);
     this.minRating.set(0);
     this.openNowOnly = false;
     this.selectedTags.set([]);

@@ -7,33 +7,38 @@ import { MembershipPlan } from '../../../core/models';
   standalone: true,
   imports: [RouterLink],
   template: `
+    <!-- overflow-visible so the -top-4 badge is never clipped -->
     <div [class]="plan.popular ? 'ring-2 ring-primary scale-105 z-10' : ''"
-         class="card relative group hover:-translate-y-1 transition-all duration-300">
+         class="relative group hover:-translate-y-1 transition-all duration-300"
+         style="overflow:visible">
       @if (plan.popular) {
-        <div class="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
-          <span class="bg-primary text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wide">Most Popular</span>
+        <div class="absolute -top-5 left-0 right-0 flex justify-center z-20">
+          <span class="bg-primary text-white text-xs font-bold px-5 py-2 rounded-full uppercase tracking-wide shadow-lg shadow-primary/40 whitespace-nowrap">
+            ⭐ Most Popular
+          </span>
         </div>
       }
 
-      <div [class]="plan.popular ? 'bg-gradient-to-br from-primary/20 to-dark-700' : 'bg-dark-700'" class="p-8">
+      <div [class]="plan.popular ? 'bg-gradient-to-br from-primary/20 to-dark-700 border-2 border-primary/40' : 'bg-dark-700 border border-dark-500'"
+           class="rounded-2xl p-8 h-full flex flex-col" [style.padding-top]="plan.popular ? '2.5rem' : '2rem'">
         <div class="text-center mb-6">
           <h3 class="font-display text-2xl font-bold text-white uppercase mb-1">{{plan.name}}</h3>
           <p class="text-gray-400 text-sm">{{plan.duration}}</p>
           <div class="mt-4">
             @if (plan.originalPrice) {
-              <span class="text-gray-500 line-through text-lg mr-2">{{"$"}}{{plan.originalPrice}}</span>
+              <span class="text-gray-500 line-through text-lg mr-2">₹{{plan.originalPrice}}</span>
             }
-            <span class="text-5xl font-bold text-white">{{"$"}}{{plan.price}}</span>
+            <span class="text-5xl font-bold text-white">₹{{plan.price}}</span>
             <span class="text-gray-400 text-sm">/month</span>
           </div>
           @if (plan.originalPrice) {
             <span class="badge bg-green-500/20 text-green-400 border border-green-500/30 mt-2">
-              Save {{ '$' + (plan.originalPrice! - plan.price) }}/mo
+              Save {{ '₹' + (plan.originalPrice! - plan.price) }}/mo
             </span>
           }
         </div>
 
-        <ul class="space-y-3 mb-8">
+        <ul class="space-y-3 mb-8 flex-1">
           @for (feature of plan.features; track feature) {
             <li class="flex items-center gap-3 text-gray-300 text-sm">
               <svg class="w-5 h-5 text-primary shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -44,7 +49,7 @@ import { MembershipPlan } from '../../../core/models';
           }
         </ul>
 
-        <a routerLink="/contact" [class]="plan.popular ? 'btn-primary' : 'btn-secondary'" class="w-full justify-center">
+        <a routerLink="/contact" [class]="plan.popular ? 'btn-primary' : 'btn-secondary'" class="w-full justify-center mt-auto">
           Join Now
         </a>
       </div>

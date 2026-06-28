@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DataService } from '../../core/services/data.service';
 import { Gym } from '../../core/models';
@@ -165,7 +165,7 @@ import { Gym } from '../../core/models';
                         <p class="text-gray-400 text-sm">{{plan.duration}}</p>
                       </div>
                       <div class="text-right">
-                        <p class="text-primary font-bold text-xl">{{"$"}}{{plan.price}}</p>
+                        <p class="text-primary font-bold text-xl">₹{{plan.price | number}}</p>
                         <p class="text-gray-500 text-xs">per month</p>
                       </div>
                     </div>

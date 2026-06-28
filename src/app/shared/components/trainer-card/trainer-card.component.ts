@@ -7,7 +7,7 @@ import { Trainer } from '../../../core/models';
   standalone: true,
   imports: [RouterLink],
   template: `
-    <div class="card group hover:-translate-y-1 transition-all duration-300 shadow-xl text-center">
+    <div class="card group hover:-translate-y-1 transition-all duration-300 shadow-xl text-center h-full flex flex-col">
       <!-- Photo -->
       <div class="relative">
         <div class="overflow-hidden h-64">
@@ -26,7 +26,7 @@ import { Trainer } from '../../../core/models';
       </div>
 
       <!-- Info -->
-      <div class="p-5">
+      <div class="p-5 flex flex-col flex-1">
         <h3 class="font-display text-xl font-bold text-white group-hover:text-primary transition-colors">{{trainer.name}}</h3>
         <p class="text-primary text-sm font-medium mt-1 mb-3">{{trainer.title}}</p>
 
@@ -48,7 +48,7 @@ import { Trainer } from '../../../core/models';
           <span class="flex items-center gap-1"><strong class="text-white">{{trainer.clients}}+</strong> clients</span>
         </div>
 
-        <a [routerLink]="['/trainers', trainer.slug]" class="btn-primary w-full justify-center text-sm py-2.5">
+        <a [routerLink]="['/trainers', trainer.slug]" class="btn-primary w-full justify-center text-sm py-2.5 mt-auto">
           View Profile
         </a>
       </div>

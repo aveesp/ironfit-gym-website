@@ -51,5 +51,20 @@ export const routes: Routes = [
     loadComponent: () => import('./features/contact/contact.component').then(m => m.ContactComponent),
     title: 'Contact - IronFit'
   },
+  {
+    path: 'privacy',
+    loadComponent: () => import('./features/privacy-policy/privacy-policy.component').then(m => m.PrivacyPolicyComponent),
+    title: 'Privacy Policy - IronFit'
+  },
+  {
+    path: 'terms',
+    loadComponent: () => import('./features/terms-of-service/terms-of-service.component').then(m => m.TermsOfServiceComponent),
+    title: 'Terms of Service - IronFit'
+  },
+  {
+    path: 'sitemap',
+    loadComponent: () => import('./features/sitemap/sitemap.component').then(m => m.SitemapComponent),
+    title: 'Sitemap - IronFit'
+  },
   { path: '**', redirectTo: '' }
 ];

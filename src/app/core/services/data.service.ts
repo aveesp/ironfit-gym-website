@@ -8,7 +8,7 @@ export class DataService {
       id: '1', name: 'Iron Beast Gym', slug: 'iron-beast-gym',
       description: 'Premium fitness facility with state-of-the-art equipment, expert trainers, and a motivating community. We offer everything from strength training to cardio and yoga.',
       rating: 4.8, reviewCount: 342, location: 'Downtown', city: 'New York', address: '123 Fitness Ave, Manhattan, NY 10001',
-      price: 49, priceLabel: '$49/mo', featured: true,
+      price: 3999, priceLabel: '₹3,999/mo', featured: true,
       images: ['https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800', 'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=800', 'https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=800'],
       amenities: ['Locker Rooms', 'Showers', 'Parking', 'WiFi', 'Juice Bar', 'Sauna'],
       facilities: ['Cardio Zone', 'Free Weights', 'CrossFit Box', 'Pool', 'Yoga Studio', 'Spin Room'],
@@ -22,7 +22,7 @@ export class DataService {
       id: '2', name: 'Flex Power Studio', slug: 'flex-power-studio',
       description: 'Boutique fitness studio specializing in HIIT, strength training, and functional fitness. Small group classes for maximum results.',
       rating: 4.6, reviewCount: 218, location: 'Midtown', city: 'New York', address: '456 Strength Blvd, Midtown, NY 10019',
-      price: 39, priceLabel: '$39/mo', featured: true,
+      price: 3199, priceLabel: '₹3,199/mo', featured: true,
       images: ['https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800', 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800'],
       amenities: ['Locker Rooms', 'Showers', 'WiFi', 'Towel Service'],
       facilities: ['HIIT Studio', 'Free Weights', 'Functional Training', 'Cardio'],
@@ -36,7 +36,7 @@ export class DataService {
       id: '3', name: 'Zenith Wellness Club', slug: 'zenith-wellness-club',
       description: 'A luxury wellness destination combining fitness, spa, and mindfulness. Perfect for those seeking holistic health transformation.',
       rating: 4.9, reviewCount: 512, location: 'Upper East Side', city: 'New York', address: '789 Wellness Way, UES, NY 10028',
-      price: 89, priceLabel: '$89/mo', featured: true,
+      price: 7499, priceLabel: '₹7,499/mo', featured: true,
       images: ['https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=800', 'https://images.unsplash.com/photo-1593079831268-3381b0db4a77?w=800'],
       amenities: ['Luxury Lockers', 'Steam Room', 'Sauna', 'Pool', 'Cafe', 'Valet Parking'],
       facilities: ['Olympic Pool', 'Yoga Studio', 'Pilates', 'Cardio', 'Weights', 'Spa'],
@@ -50,7 +50,7 @@ export class DataService {
       id: '4', name: 'Urban CrossFit Box', slug: 'urban-crossfit-box',
       description: 'NYC\'s premier CrossFit affiliate. Push your limits with our certified coaches and a passionate community.',
       rating: 4.7, reviewCount: 189, location: 'Brooklyn', city: 'New York', address: '321 Box St, Brooklyn, NY 11201',
-      price: 55, priceLabel: '$55/mo', featured: false,
+      price: 4499, priceLabel: '₹4,499/mo', featured: false,
       images: ['https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?w=800', 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800'],
       amenities: ['Locker Rooms', 'Parking', 'Gear Shop'],
       facilities: ['CrossFit Box', 'Olympic Lifting', 'Gymnastics Rings', 'Rowers', 'Assault Bikes'],
@@ -64,7 +64,7 @@ export class DataService {
       id: '5', name: 'Lotus Yoga & Pilates', slug: 'lotus-yoga-pilates',
       description: 'A serene sanctuary for yoga and Pilates. All levels welcome — from beginners to advanced practitioners.',
       rating: 4.5, reviewCount: 276, location: 'Tribeca', city: 'New York', address: '555 Calm St, Tribeca, NY 10013',
-      price: 35, priceLabel: '$35/mo', featured: false,
+      price: 2799, priceLabel: '₹2,799/mo', featured: false,
       images: ['https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=800', 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800'],
       amenities: ['Changing Rooms', 'Showers', 'Mat Rental', 'Tea Bar'],
       facilities: ['Hot Yoga', 'Vinyasa', 'Pilates Reformer', 'Meditation Room'],
@@ -78,7 +78,7 @@ export class DataService {
       id: '6', name: 'AquaFit Center', slug: 'aquafit-center',
       description: 'The city\'s best aquatic fitness facility. Olympic pool, swimming lessons, water aerobics, and more.',
       rating: 4.4, reviewCount: 143, location: 'Queens', city: 'New York', address: '888 Pool Rd, Queens, NY 11375',
-      price: 45, priceLabel: '$45/mo', featured: false,
+      price: 3699, priceLabel: '₹3,699/mo', featured: false,
       images: ['https://images.unsplash.com/photo-1530549387789-4c1017266635?w=800', 'https://images.unsplash.com/photo-1560089000-7433a4ebbd64?w=800'],
       amenities: ['Olympic Pool', 'Locker Rooms', 'Parking', 'Cafe'],
       facilities: ['Olympic Pool', 'Warm-up Pool', 'Cardio', 'Weights', 'Water Aerobics'],
@@ -178,16 +178,16 @@ export class DataService {
 
   plans: MembershipPlan[] = [
     {
-      id: '1', name: 'Day Pass', duration: '1 Day', price: 15, features: ['Full gym access', 'Locker room', 'One group class', 'Towel service'], popular: false, color: 'border-gray-500'
+      id: '1', name: 'Day Pass', duration: '1 Day', price: 1299, features: ['Full gym access', 'Locker room', 'One group class', 'Towel service'], popular: false, color: 'border-gray-500'
     },
     {
-      id: '2', name: 'Monthly', duration: '1 Month', price: 49, originalPrice: 69, features: ['Unlimited gym access', 'All group classes', 'Locker & towel', '1 PT session/month', 'App access', 'Nutrition guide'], popular: true, color: 'border-primary'
+      id: '2', name: 'Monthly', duration: '1 Month', price: 3999, originalPrice: 5999, features: ['Unlimited gym access', 'All group classes', 'Locker & towel', '1 PT session/month', 'App access', 'Nutrition guide'], popular: true, color: 'border-primary'
     },
     {
-      id: '3', name: 'Quarterly', duration: '3 Months', price: 39, originalPrice: 49, features: ['Everything in Monthly', '3 PT sessions/month', 'Body composition analysis', 'Priority booking', 'Guest passes (2/mo)'], popular: false, color: 'border-orange-500'
+      id: '3', name: 'Quarterly', duration: '3 Months', price: 3199, originalPrice: 3999, features: ['Everything in Monthly', '3 PT sessions/month', 'Body composition analysis', 'Priority booking', 'Guest passes (2/mo)'], popular: false, color: 'border-orange-500'
     },
     {
-      id: '4', name: 'Annual', duration: '12 Months', price: 29, originalPrice: 49, features: ['Everything in Quarterly', 'Unlimited PT consultations', 'Meal plan access', 'VIP locker', 'Spa discounts (20%)', 'Free merchandise'], popular: false, color: 'border-yellow-500'
+      id: '4', name: 'Annual', duration: '12 Months', price: 2499, originalPrice: 3999, features: ['Everything in Quarterly', 'Unlimited PT consultations', 'Meal plan access', 'VIP locker', 'Spa discounts (20%)', 'Free merchandise'], popular: false, color: 'border-yellow-500'
     },
   ];
 
