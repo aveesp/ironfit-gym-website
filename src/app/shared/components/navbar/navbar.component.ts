@@ -1,6 +1,7 @@
-import { Component, signal, HostListener } from '@angular/core';
+import { Component, signal, HostListener, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FirebaseAuthService } from '../../../core/services/firebase-auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -47,7 +48,12 @@ import { CommonModule } from '@angular/common';
               }
             </button>
             <a routerLink="/contact" class="text-gray-300 hover:text-white font-medium transition-colors">Contact</a>
-            <a routerLink="/gyms" class="btn-primary text-sm py-2.5">Join Today</a>
+            @if (authSvc.currentUser()) {
+              <button (click)="authSvc.logout()" class="btn-secondary text-sm py-2.5">Sign Out</button>
+            } @else {
+              <a routerLink="/login" class="text-gray-300 hover:text-white font-medium transition-colors">Sign In</a>
+              <a routerLink="/register" class="btn-primary text-sm py-2.5">Join Today</a>
+            }
           </div>
 
           <!-- Mobile menu button -->
@@ -82,6 +88,7 @@ import { CommonModule } from '@angular/common';
   `,
 })
 export class NavbarComponent {
+  authSvc = inject(FirebaseAuthService);
   scrolled = signal(false);
   menuOpen = signal(false);
   isDark = signal(true);

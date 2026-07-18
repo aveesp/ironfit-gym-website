@@ -1,0 +1,47 @@
+redirectsOrigin = "config"
+headers = []
+
+[functions]
+
+[functions."*"]
+
+[[plugins]]
+origin = "default"
+package = "@netlify/angular-runtime"
+
+[plugins.inputs]
+
+[build]
+publish = "/Users/owez/workspace/GYM/gym-frontend/dist/gym-frontend/browser"
+publishOrigin = "config"
+commandOrigin = "config"
+command = "npx ng build --configuration production"
+
+[build.environment]
+NODE_VERSION = "22"
+NPM_FLAGS = "--legacy-peer-deps"
+NETLIFY_USE_YARN = "false"
+
+[build.processing]
+
+[build.processing.css]
+
+[build.processing.html]
+
+[build.processing.images]
+
+[build.processing.js]
+
+[build.services]
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
