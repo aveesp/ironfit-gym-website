@@ -252,6 +252,149 @@ export class DataService {
       image: 'https://images.unsplash.com/photo-1530549387789-4c1017266635?w=800',
       date: '2024-02-20', readTime: 5, tags: ['Swimming', 'Cardio', 'Recovery']
     },
+    {
+      id: '7', slug: 'how-to-choose-best-gym',
+      title: 'How to Choose the Best Gym Near You',
+      excerpt: 'A complete guide for beginners — because the right gym makes all the difference to your fitness journey.',
+      category: 'Guide',
+      author: 'IronFit Editorial', authorAvatar: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=100',
+      image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800',
+      date: '2024-04-01', readTime: 7, tags: ['Guide', 'Beginners', 'Gym Selection'],
+      content: `
+<div class="blog-rich-content">
+
+  <div class="blog-section">
+    <h2>Why Your Gym Choice Matters</h2>
+    <p>Finding the right gym is your first important step toward achieving your fitness goals. Whether you want to lose weight, build muscle, improve your strength, or simply live a healthier lifestyle — choosing a gym that fits your needs makes it <strong>easier to stay consistent.</strong></p>
+    <div class="blog-tip-box">
+      <span class="blog-tip-icon">📋</span>
+      <span>With so many gyms available, knowing what to look for can save you time, money, and frustration.</span>
+    </div>
+  </div>
+
+  <div class="blog-section">
+    <span class="blog-factor-tag">Factor 1</span>
+    <h2>Choose a Convenient Location</h2>
+    <p>The best gym is often the one you can <strong>visit consistently</strong>. Look for a gym close to your home, workplace, or daily travel route.</p>
+    <div class="blog-card-grid">
+      <div class="blog-mini-card">
+        <div class="blog-mini-label">🏠 Near Home</div>
+        <p>Easy to fit into your morning or evening routine.</p>
+      </div>
+      <div class="blog-mini-card">
+        <div class="blog-mini-label">💼 Near Work</div>
+        <p>Perfect for lunchtime or after-work sessions.</p>
+      </div>
+      <div class="blog-mini-card">
+        <div class="blog-mini-label">🚗 On Your Route</div>
+        <p>No detours means no excuses.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="blog-section">
+    <span class="blog-factor-tag">Factor 2</span>
+    <h2>Check the Equipment</h2>
+    <p>A good gym should have equipment that matches your preferred style of training. Before joining, take a tour and see whether it has what you need.</p>
+    <p>Make a <strong>list</strong> of the equipment you'll use most and check whether the gym has it. If you're unsure, ask a staff member to walk you through what's available.</p>
+    <div class="blog-tip-box">
+      <span class="blog-tip-icon">📋</span>
+      <span>Don't forget to check whether equipment is in good working condition during your visit.</span>
+    </div>
+  </div>
+
+  <div class="blog-section">
+    <span class="blog-factor-tag">Factor 3</span>
+    <h2>Consider the Gym Environment</h2>
+    <p><strong>Visit the gym before joining.</strong> Spend 15–20 minutes observing the atmosphere at the time of day you'd normally work out.</p>
+    <div class="blog-two-col" style="margin-top:24px;">
+      <div class="blog-env-card">
+        <h3>🤫 Quiet &amp; Focused</h3>
+        <p>Some people prefer a calm, low-key atmosphere where they can concentrate fully without distractions.</p>
+      </div>
+      <div class="blog-env-card">
+        <h3>⚡ Social &amp; Energetic</h3>
+        <p>Others thrive in a lively environment where they can meet fellow fitness enthusiasts and feed off the group energy.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="blog-section">
+    <span class="blog-factor-tag">Factor 4</span>
+    <h2>Look at Cleanliness &amp; Maintenance</h2>
+    <p>A clean, well-maintained gym is essential for a positive workout experience. These small details make a significant difference.</p>
+    <div class="blog-icon-grid">
+      <div class="blog-icon-feature"><div class="blog-circle">🧽</div><p>Equipment Cleaned Regularly</p></div>
+      <div class="blog-icon-feature"><div class="blog-circle">🚿</div><p>Hygienic Showers &amp; Changing Rooms</p></div>
+      <div class="blog-icon-feature"><div class="blog-circle">🛠️</div><p>Equipment in Good Condition</p></div>
+      <div class="blog-icon-feature"><div class="blog-circle">💨</div><p>Adequate Ventilation</p></div>
+    </div>
+  </div>
+
+  <div class="blog-section">
+    <span class="blog-factor-tag">Factor 5</span>
+    <h2>Compare Membership Plans</h2>
+    <p>Don't just look at the price — understand what you're signing up for.</p>
+    <div class="blog-plan-list">
+      <div class="blog-plan-item"><span class="blog-arrow">↑</span><div><strong>Monthly, Quarterly &amp; Annual Plans</strong><p>Annual plans often offer better value if you're committed.</p></div></div>
+      <div class="blog-plan-item"><span class="blog-arrow">↑</span><div><strong>Personal Training Packages</strong><p>Great for beginners who want guided support.</p></div></div>
+      <div class="blog-plan-item"><span class="blog-arrow">↑</span><div><strong>Group Fitness Classes</strong><p>Check whether classes are included or cost extra.</p></div></div>
+      <div class="blog-plan-item"><span class="blog-arrow">↑</span><div><strong>Cancellation Policy</strong><p>Always read the fine print before signing.</p></div></div>
+    </div>
+  </div>
+
+  <div class="blog-section">
+    <span class="blog-factor-tag">Factor 6</span>
+    <h2>Ask About Personal Trainers</h2>
+    <p>If you're new to fitness or unsure how to use equipment, a personal trainer can be invaluable. A good trainer helps you:</p>
+    <div class="blog-numbered-list">
+      <div class="blog-num-item"><span class="blog-num">01</span><span>Create a personalised workout plan</span></div>
+      <div class="blog-num-item"><span class="blog-num">02</span><span>Learn correct exercise form</span></div>
+      <div class="blog-num-item"><span class="blog-num">03</span><span>Set realistic fitness goals</span></div>
+      <div class="blog-num-item"><span class="blog-num">04</span><span>Track your progress over time</span></div>
+      <div class="blog-num-item"><span class="blog-num">05</span><span>Stay accountable and motivated</span></div>
+    </div>
+  </div>
+
+  <div class="blog-section">
+    <span class="blog-factor-tag">Factor 7</span>
+    <h2>Check the Operating Hours</h2>
+    <p>Even the best gym won't help you if it's closed when you want to work out. Check that the hours fit your lifestyle.</p>
+    <div class="blog-card-grid">
+      <div class="blog-mini-card">
+        <div class="blog-mini-label">🌅 Early Birds</div>
+        <p>If you prefer morning workouts, confirm the gym opens early enough.</p>
+      </div>
+      <div class="blog-mini-card">
+        <div class="blog-mini-label">🌙 Night Owls</div>
+        <p>If you exercise after work, make sure it stays open late enough for your schedule.</p>
+      </div>
+      <div class="blog-mini-card" style="grid-column: 1 / -1;">
+        <div class="blog-mini-label">📅 Weekends</div>
+        <p>Don't forget to check weekend hours — they can differ from weekdays.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="blog-section">
+    <h2>Final Thoughts</h2>
+    <p>Choosing the right gym is not just about finding the cheapest membership. It's about finding a place where you feel <strong>comfortable, motivated, and ready to achieve your goals.</strong></p>
+    <div class="blog-badge-row">
+      <span class="blog-badge">📍 Location</span>
+      <span class="blog-badge">🏋️ Equipment</span>
+      <span class="blog-badge">🌐 Atmosphere</span>
+      <span class="blog-badge">🧼 Cleanliness</span>
+      <span class="blog-badge">📋 Membership</span>
+      <span class="blog-badge">🕐 Hours</span>
+    </div>
+    <div class="blog-conclusion">
+      ✅ The best gym for you is the one that fits your lifestyle and makes it easier to stay committed to your fitness journey.
+    </div>
+  </div>
+
+</div>
+      `
+    },
   ];
 
   faqs: FAQ[] = [

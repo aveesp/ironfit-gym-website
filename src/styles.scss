@@ -95,52 +95,421 @@
   background: linear-gradient(135deg, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0.7) 50%, rgba(230,0,0,0.1) 100%);
 }
 
+/* ── Plan cards (dark defaults) ── */
+.plan-card-popular { background: linear-gradient(160deg, rgba(230,0,0,0.22) 0%, #1c1c1c 55%, #1a1a1a 100%); }
+.plan-card-regular { background-color: #1c1c1c; }
+.plan-card-title   { color: #ffffff; }
+.plan-card-subtitle { color: #9ca3af; }
+.plan-card-original { color: #6b7280; }
+.plan-card-price   { color: #ffffff; }
+.plan-card-feature { color: #d1d5db; }
+
+/* ── Filter pills (dark defaults) ── */
+.filter-pill-inactive {
+  background-color: #1f1f1f;
+  color: #9ca3af;
+  border: 1px solid #3d3d3d;
+  &:hover { color: #ffffff; }
+}
+
+/* ── Trainer CTA (dark default) ── */
+.trainer-cta-section {
+  background-color: #111111;
+  background-image: radial-gradient(ellipse at center, rgba(230,0,0,0.18) 0%, transparent 70%);
+  border-top: 1px solid rgba(230,0,0,0.25);
+  border-bottom: 1px solid rgba(230,0,0,0.25);
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  display: block;
+  box-sizing: border-box;
+}
+.trainer-cta-title    { color: #ffffff; }
+.trainer-cta-subtitle { color: #9ca3af; }
+
+/* ── Gym card image overlays (always dark bg + white text — on top of photo) ── */
+.gym-card-overlay-badge {
+  background-color: rgba(10,10,10,0.88);
+  color: #ffffff;
+}
+.gym-card-overlay-text { color: #ffffff; }
+.gym-card-overlay-sub  { color: #d1d5db; }
+
+/* ── Services page ── */
+.service-icon-wrap {
+  width: 64px; height: 64px;
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(230,0,0,0.12);
+  color: #e60000;
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+
 /* ===== LIGHT THEME ===== */
 .light-theme {
   body { background-color: #f1f5f9; color: #0f172a; }
 
-  .bg-dark-900 { background-color: #f1f5f9 !important; }
-  .bg-dark-800 { background-color: #e2e8f0 !important; }
-  .bg-dark-700 { background-color: #ffffff !important; }
-  .bg-dark-600 { background-color: #e2e8f0 !important; }
+  /* ── Navbar: always show background so links are readable ── */
+  nav {
+    background-color: rgba(241,245,249,0.97) !important;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 1px 8px rgba(0,0,0,0.08);
+  }
+  nav .nav-link,
+  nav a.text-gray-300,
+  nav span.text-white { color: #374151 !important; }
+  nav a.text-white,
+  nav a:not(.btn-primary):not(.btn-secondary) { color: #374151 !important; }
+  nav a:hover { color: #0f172a !important; }
 
-  .text-white { color: #0f172a !important; }
-  .text-gray-300 { color: #374151 !important; }
-  .text-gray-400 { color: #4b5563 !important; }
-  .text-gray-500 { color: #6b7280 !important; }
+  /* ── Section backgrounds — skip hero (min-h-screen) ── */
+  section.bg-dark-900:not(.min-h-screen) { background-color: #f1f5f9 !important; }
+  section.bg-dark-800:not(.min-h-screen) { background-color: #e2e8f0 !important; }
+  section.bg-dark-700:not(.min-h-screen) { background-color: #ffffff !important; }
+  div.bg-dark-900:not(.min-h-screen):not([class*="absolute"]) { background-color: #f1f5f9 !important; }
+  /* gradient sections (pricing, why-ironfit, etc.) */
+  section[class*="bg-gradient"]:not(.min-h-screen):not([class*="from-primary"]) {
+    background: #e2e8f0 !important;
+  }
+  section[class*="bg-gradient"]:not(.min-h-screen):not([class*="from-primary"]) .text-white { color: #0f172a !important; }
+  section[class*="bg-gradient"]:not(.min-h-screen):not([class*="from-primary"]) .text-gray-400 { color: #4b5563 !important; }
+  section[class*="bg-gradient"]:not(.min-h-screen):not([class*="from-primary"]) .text-gray-300 { color: #374151 !important; }
 
-  .border-dark-600 { border-color: #cbd5e1 !important; }
-  .border-dark-500 { border-color: #94a3b8 !important; }
-  .border-dark-400 { border-color: #64748b !important; }
-  .border-dark-300 { border-color: #e2e8f0 !important; }
-  .border-white\/10 { border-color: rgba(0,0,0,0.1) !important; }
+  /* ── Text in non-hero sections ── */
+  section.bg-dark-900:not(.min-h-screen) .text-white,
+  section.bg-dark-800:not(.min-h-screen) .text-white { color: #0f172a !important; }
 
+  section.bg-dark-900:not(.min-h-screen) .text-gray-300,
+  section.bg-dark-800:not(.min-h-screen) .text-gray-300 { color: #374151 !important; }
+
+  section.bg-dark-900:not(.min-h-screen) .text-gray-400,
+  section.bg-dark-800:not(.min-h-screen) .text-gray-400 { color: #4b5563 !important; }
+
+  section.bg-dark-900:not(.min-h-screen) .text-gray-500,
+  section.bg-dark-800:not(.min-h-screen) .text-gray-500 { color: #6b7280 !important; }
+
+  /* ── Cards ── */
   .card {
     background-color: #ffffff !important;
     border-color: #e2e8f0 !important;
   }
+  .card .text-white   { color: #0f172a !important; }
+  .card .text-gray-300 { color: #374151 !important; }
+  .card .text-gray-400 { color: #4b5563 !important; }
+  .card .text-gray-500 { color: #6b7280 !important; }
+  .card .border-dark-500 { border-color: #e2e8f0 !important; }
+  .card .border-dark-400 { border-color: #cbd5e1 !important; }
+  .card .bg-dark-700  { background-color: #f8fafc !important; }
+  .card .bg-dark-600  { background-color: #f1f5f9 !important; }
 
+  /* ── Glass panels (gym detail info card, etc.) ── */
   .glass {
-    background: rgba(255,255,255,0.85) !important;
+    background: rgba(255,255,255,0.9) !important;
     border-color: rgba(0,0,0,0.08) !important;
   }
+  .glass .text-white   { color: #0f172a !important; }
+  .glass .text-gray-300 { color: #374151 !important; }
+  .glass .text-gray-400 { color: #4b5563 !important; }
 
+  /* ── Input fields ── */
   .input-field {
-    background-color: #f8fafc !important;
+    background-color: #ffffff !important;
     border-color: #cbd5e1 !important;
     color: #0f172a !important;
   }
   .input-field::placeholder { color: #94a3b8 !important; }
 
-  nav.bg-dark-800\/95 { background-color: rgba(226,232,240,0.95) !important; }
+  /* ── Sidebar aside ── */
+  aside .card,
+  aside .sticky { background-color: #ffffff !important; }
 
-  .bg-dark-600.hover\:bg-primary:not(:hover) { background-color: #e2e8f0 !important; }
+  /* ── Borders ── */
+  .border-dark-600 { border-color: #cbd5e1 !important; }
+  .border-dark-500 { border-color: #d1d5db !important; }
+  .border-dark-400 { border-color: #9ca3af !important; }
+  .border-white\/10 { border-color: rgba(0,0,0,0.08) !important; }
 
+  /* ── Footer ── */
   footer { background-color: #e2e8f0 !important; }
+  footer .text-white   { color: #0f172a !important; }
+  footer .text-gray-300 { color: #374151 !important; }
+  footer .text-gray-400 { color: #4b5563 !important; }
+  footer .text-gray-500 { color: #6b7280 !important; }
+  footer .border-dark-600 { border-color: #cbd5e1 !important; }
+  footer .bg-dark-600 { background-color: #d1d5db !important; }
 
-  .badge { border-color: rgba(0,0,0,0.15) !important; }
+  /* ── Plan card border in light ── */
+  .plan-card-regular { border-color: #cbd5e1 !important; }
+  .plan-card-popular { border-color: rgba(230,0,0,0.35) !important; }
+
+  /* ── Gym card facility tags ── */
+  .card .bg-dark-600 { background-color: #e2e8f0 !important; }
+  .card .text-gray-300 { color: #374151 !important; }
+  .card .border-dark-400 { border-color: #cbd5e1 !important; }
+
+  /* ── Plan cards ── */
+  .plan-card-popular { background: linear-gradient(135deg, rgba(230,0,0,0.08), #ffffff) !important; }
+  .plan-card-regular { background-color: #ffffff !important; }
+  .plan-card-title   { color: #0f172a !important; }
+  .plan-card-subtitle { color: #6b7280 !important; }
+  .plan-card-original { color: #9ca3af !important; }
+  .plan-card-price   { color: #0f172a !important; }
+  .plan-card-feature { color: #374151 !important; }
+
+  /* ── Filter pills ── */
+  .filter-pill-inactive {
+    background-color: #e2e8f0 !important;
+    color: #374151 !important;
+    border-color: #cbd5e1 !important;
+    &:hover { color: #0f172a !important; background-color: #cbd5e1 !important; }
+  }
+
+  /* ── Trainer / membership section backgrounds ── */
+  section.trainers-filter-section { background-color: #f1f5f9 !important; }
+  section.bg-dark-900:not(.min-h-screen) { background-color: #f1f5f9 !important; }
+  section.bg-dark-800:not(.min-h-screen) { background-color: #e2e8f0 !important; }
+
+  /* ── Trainer CTA ── */
+  .trainer-cta-section {
+    background-color: #e2e8f0 !important;
+    background-image: radial-gradient(ellipse at center, rgba(230,0,0,0.08) 0%, transparent 70%) !important;
+    border-color: rgba(230,0,0,0.15) !important;
+  }
+  .trainer-cta-title    { color: #0f172a !important; }
+  .trainer-cta-subtitle { color: #4b5563 !important; }
+
+  /* ── Membership page header ── */
+  section.bg-dark-800:not(.min-h-screen) .text-white { color: #0f172a !important; }
+  section.bg-dark-800:not(.min-h-screen) .text-gray-400 { color: #4b5563 !important; }
+
+  /* ── Comparison table ── */
+  .card table .text-gray-300 { color: #374151 !important; }
+  .card table .text-gray-400 { color: #4b5563 !important; }
+  .card table .text-gray-600 { color: #9ca3af !important; }
+  .card .border-dark-500 { border-color: #e2e8f0 !important; }
+  .card .border-dark-600 { border-color: #f1f5f9 !important; }
+  .card .hover\:bg-dark-600\/30:hover { background-color: rgba(226,232,240,0.5) !important; }
+
+  /* ── Service page ── */
+  .service-icon-wrap { background: rgba(230,0,0,0.08) !important; }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar-track { background: #e2e8f0; }
 }
 /* ===== END LIGHT THEME ===== */
+
+/* ===== BLOG RICH CONTENT ===== */
+.blog-rich-content { display: flex; flex-direction: column; gap: 0; }
+
+.blog-section {
+  background: #1c1c1c;
+  border: 1px solid #2d2d2d;
+  border-radius: 1.25rem;
+  padding: 2.25rem;
+  margin-bottom: 1.75rem;
+}
+.blog-section h2 {
+  font-family: 'Oswald', Impact, sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.blog-section h3 {
+  font-size: 1.1rem; font-weight: 600; color: #e5e7eb; margin: 0 0 0.5rem;
+}
+.blog-section p { color: #d1d5db; line-height: 1.75; margin: 0 0 0.75rem; }
+.blog-section strong { color: #f9fafb; }
+
+.blog-factor-tag {
+  display: inline-block;
+  background: rgba(230,0,0,0.15);
+  color: #e60000;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(230,0,0,0.3);
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+}
+
+.blog-tip-box {
+  background: rgba(230,0,0,0.08);
+  border: 1px solid rgba(230,0,0,0.2);
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  color: #d1d5db;
+  font-size: 0.95rem;
+}
+.blog-tip-icon { flex-shrink: 0; font-size: 1.1rem; }
+
+.blog-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.blog-mini-card {
+  background: #252525;
+  border: 1px solid #333;
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+.blog-mini-label { font-weight: 700; color: #f3f4f6; font-size: 0.9rem; margin-bottom: 0.4rem; }
+.blog-mini-card p { color: #9ca3af; font-size: 0.875rem; margin: 0; }
+
+.blog-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
+}
+.blog-env-card {
+  background: #252525;
+  border: 1px solid #333;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  text-align: center;
+}
+.blog-env-card h3 { color: #f3f4f6; font-size: 1rem; margin-bottom: 0.5rem; }
+.blog-env-card p  { color: #9ca3af; font-size: 0.875rem; margin: 0; }
+
+.blog-icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.blog-icon-feature { text-align: center; }
+.blog-circle {
+  width: 56px; height: 56px;
+  background: rgba(230,0,0,0.1);
+  border: 1px solid rgba(230,0,0,0.25);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem;
+  margin: 0 auto 0.5rem;
+}
+.blog-icon-feature p { color: #9ca3af; font-size: 0.8rem; margin: 0; text-align: center; }
+
+.blog-plan-list { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.75rem; }
+.blog-plan-item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  background: #252525;
+  border: 1px solid #333;
+  border-radius: 0.625rem;
+  padding: 0.875rem 1rem;
+}
+.blog-arrow { color: #e60000; font-size: 1.1rem; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+.blog-plan-item strong { color: #f3f4f6; font-size: 0.95rem; display: block; margin-bottom: 0.25rem; }
+.blog-plan-item p { color: #9ca3af; font-size: 0.85rem; margin: 0; }
+
+.blog-numbered-list { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.625rem; }
+.blog-num-item {
+  display: flex; gap: 1rem; align-items: center;
+  padding: 0.75rem 1rem;
+  background: #252525;
+  border-radius: 0.625rem;
+  border: 1px solid #333;
+  color: #d1d5db;
+  font-size: 0.95rem;
+}
+.blog-num {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #e60000;
+  min-width: 2rem;
+}
+
+.blog-badge-row {
+  display: flex; flex-wrap: wrap; gap: 0.625rem; margin: 1.25rem 0;
+}
+.blog-badge {
+  background: #252525;
+  border: 1px solid #333;
+  border-radius: 2rem;
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
+  color: #d1d5db;
+  font-weight: 500;
+}
+
+.blog-conclusion {
+  background: rgba(34,197,94,0.08);
+  border: 1px solid rgba(34,197,94,0.25);
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  color: #86efac;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* ── Light theme overrides for blog ── */
+.light-theme {
+  .blog-section {
+    background: #ffffff !important;
+    border-color: #e2e8f0 !important;
+  }
+  .blog-section h2 { color: #0f172a !important; }
+  .blog-section h3 { color: #1e293b !important; }
+  .blog-section p  { color: #374151 !important; }
+  .blog-section strong { color: #0f172a !important; }
+
+  .blog-factor-tag {
+    background: rgba(230,0,0,0.08) !important;
+    border-color: rgba(230,0,0,0.2) !important;
+  }
+
+  .blog-tip-box {
+    background: rgba(230,0,0,0.05) !important;
+    border-color: rgba(230,0,0,0.15) !important;
+    color: #374151 !important;
+  }
+
+  .blog-mini-card  { background: #f8fafc !important; border-color: #e2e8f0 !important; }
+  .blog-mini-label { color: #0f172a !important; }
+  .blog-mini-card p { color: #6b7280 !important; }
+
+  .blog-env-card { background: #f8fafc !important; border-color: #e2e8f0 !important; }
+  .blog-env-card h3 { color: #0f172a !important; }
+  .blog-env-card p  { color: #6b7280 !important; }
+
+  .blog-circle { background: rgba(230,0,0,0.06) !important; border-color: rgba(230,0,0,0.15) !important; }
+  .blog-icon-feature p { color: #6b7280 !important; }
+
+  .blog-plan-item { background: #f8fafc !important; border-color: #e2e8f0 !important; }
+  .blog-plan-item strong { color: #0f172a !important; }
+  .blog-plan-item p { color: #6b7280 !important; }
+
+  .blog-num-item { background: #f8fafc !important; border-color: #e2e8f0 !important; color: #374151 !important; }
+
+  .blog-badge { background: #f1f5f9 !important; border-color: #cbd5e1 !important; color: #374151 !important; }
+
+  .blog-conclusion {
+    background: rgba(34,197,94,0.06) !important;
+    border-color: rgba(34,197,94,0.2) !important;
+    color: #166534 !important;
+  }
+
+  /* blog article body text */
+  .blog-article-body .text-gray-300 { color: #374151 !important; }
+}
+/* ===== END BLOG RICH CONTENT ===== */
 
 /* BG Pattern */
 .bg-hero-pattern {

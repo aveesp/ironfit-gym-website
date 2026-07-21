@@ -18,12 +18,12 @@ import { TrainerCardComponent } from '../../shared/components/trainer-card/train
       </div>
     </section>
 
-    <section class="py-16 bg-dark-900">
+    <section class="py-16 bg-dark-900 trainers-filter-section">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Filter pills -->
         <div class="flex flex-wrap gap-3 mb-10">
           @for (spec of specializations; track spec) {
-            <button [class]="activeSpec === spec ? 'bg-primary text-white' : 'bg-dark-700 text-gray-400 hover:text-white border border-dark-500'"
+            <button [class]="activeSpec === spec ? 'bg-primary text-white' : 'filter-pill-inactive'"
                     (click)="activeSpec = spec"
                     class="px-5 py-2 rounded-full text-sm font-medium transition-all duration-200">
               {{spec}}
@@ -40,10 +40,10 @@ import { TrainerCardComponent } from '../../shared/components/trainer-card/train
     </section>
 
     <!-- CTA -->
-    <section class="py-20 bg-gradient-to-r from-primary/10 via-dark-800 to-primary/10 border-y border-primary/20">
+    <section class="trainer-cta-section py-20 w-full">
       <div class="max-w-4xl mx-auto px-4 text-center">
-        <h2 class="font-display text-4xl font-bold text-white uppercase mb-4">Are You a Trainer?</h2>
-        <p class="text-gray-400 text-lg mb-8">Join our platform and connect with thousands of potential clients in your area.</p>
+        <h2 class="font-display text-4xl font-bold uppercase mb-4 trainer-cta-title">Are You a Trainer?</h2>
+        <p class="trainer-cta-subtitle text-lg mb-8">Join our platform and connect with thousands of potential clients in your area.</p>
         <a routerLink="/contact" class="btn-primary text-lg px-10 py-4">Join as a Trainer</a>
       </div>
     </section>

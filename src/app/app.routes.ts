@@ -62,6 +62,11 @@ export const routes: Routes = [
     title: 'Create Account - IronFit'
   },
   {
+    path: 'services',
+    loadComponent: () => import('./features/services/services.component').then(m => m.ServicesComponent),
+    title: 'Our Services - IronFit'
+  },
+  {
     path: 'privacy',
     loadComponent: () => import('./features/privacy-policy/privacy-policy.component').then(m => m.PrivacyPolicyComponent),
     title: 'Privacy Policy - IronFit'

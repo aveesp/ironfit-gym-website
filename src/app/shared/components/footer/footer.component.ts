@@ -54,7 +54,7 @@ import { RouterLink } from '@angular/router';
             <h4 class="font-display font-semibold text-white text-lg mb-6 uppercase tracking-wide">Services</h4>
             <ul class="space-y-3">
               @for (s of services; track s) {
-                <li><span class="text-gray-400 flex items-center gap-2"><span class="text-primary text-xs">▶</span> {{s}}</span></li>
+                <li><a routerLink="/services" class="text-gray-400 hover:text-primary flex items-center gap-2 transition-colors duration-200"><span class="text-primary text-xs">▶</span> {{s}}</a></li>
               }
             </ul>
           </div>

@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { DataService } from '../../core/services/data.service';
 import { BlogPost } from '../../core/models';
 
@@ -38,20 +39,21 @@ import { BlogPost } from '../../core/models';
             </div>
           </div>
 
-          <div class="prose prose-invert max-w-none">
+          <div class="blog-article-body">
             <p class="text-gray-300 text-xl leading-relaxed mb-8 font-light">{{post.excerpt}}</p>
-            <div class="space-y-6 text-gray-300 leading-relaxed">
-              <p>Whether you're a beginner stepping into a gym for the first time or an experienced athlete looking to optimize your training, understanding the fundamentals is essential for long-term success. This comprehensive guide covers everything you need to know to achieve your fitness goals.</p>
-              <h2 class="font-display text-2xl font-bold text-white mt-8 mb-4">The Foundation of Success</h2>
-              <p>Every successful fitness journey starts with a clear understanding of your goals. Whether you're aiming to build muscle, lose fat, improve athletic performance, or simply get healthier, your approach should be tailored to your specific objectives.</p>
-              <p>Consistency is the single most important factor in achieving fitness results. A moderate program done consistently will always outperform an intense program done sporadically. Focus on building sustainable habits first, then gradually increase intensity and volume.</p>
-              <h2 class="font-display text-2xl font-bold text-white mt-8 mb-4">Progressive Overload</h2>
-              <p>The principle of progressive overload is the cornerstone of any effective training program. By gradually increasing the demands placed on your body — whether through weight, volume, frequency, or intensity — you force adaptation and growth.</p>
-              <p>Track your workouts religiously. If you're not measuring your progress, you're guessing. A simple training log — whether digital or paper — will help you identify patterns, celebrate wins, and course-correct when needed.</p>
-              <h2 class="font-display text-2xl font-bold text-white mt-8 mb-4">Recovery & Nutrition</h2>
-              <p>Training is only one piece of the puzzle. Recovery — including adequate sleep, nutrition, and stress management — is where the real magic happens. Your muscles don't grow in the gym; they grow while you rest.</p>
-              <p>Prioritize protein intake to support muscle repair and growth. Aim for 0.7–1g of protein per pound of bodyweight daily. Focus on whole, minimally processed foods, and stay adequately hydrated throughout the day.</p>
-            </div>
+            @if (post.content) {
+              <div [innerHTML]="safeContent"></div>
+            } @else {
+              <div class="space-y-6 text-gray-300 leading-relaxed">
+                <p>Whether you're a beginner stepping into a gym for the first time or an experienced athlete looking to optimize your training, understanding the fundamentals is essential for long-term success.</p>
+                <h2 class="font-display text-2xl font-bold text-white mt-8 mb-4">The Foundation of Success</h2>
+                <p>Every successful fitness journey starts with a clear understanding of your goals. Consistency is the single most important factor in achieving fitness results.</p>
+                <h2 class="font-display text-2xl font-bold text-white mt-8 mb-4">Progressive Overload</h2>
+                <p>The principle of progressive overload is the cornerstone of any effective training program. Track your workouts religiously.</p>
+                <h2 class="font-display text-2xl font-bold text-white mt-8 mb-4">Recovery &amp; Nutrition</h2>
+                <p>Training is only one piece of the puzzle. Recovery — including adequate sleep, nutrition, and stress management — is where the real magic happens.</p>
+              </div>
+            }
           </div>
 
           <div class="mt-12 pt-8 border-t border-dark-600">
@@ -93,13 +95,18 @@ import { BlogPost } from '../../core/models';
 export class BlogDetailComponent implements OnInit {
   private data = inject(DataService);
   private route = inject(ActivatedRoute);
+  private sanitizer = inject(DomSanitizer);
 
   post: BlogPost | undefined;
   relatedPosts: BlogPost[] = [];
+  safeContent: SafeHtml = '';
 
   ngOnInit() {
     const slug = this.route.snapshot.paramMap.get('slug') || '';
     this.post = this.data.getBlogBySlug(slug);
+    if (this.post?.content) {
+      this.safeContent = this.sanitizer.bypassSecurityTrustHtml(this.post.content);
+    }
     this.relatedPosts = this.data.getBlogs().filter(b => b.slug !== slug).slice(0, 3);
   }
 }

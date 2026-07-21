@@ -36,7 +36,7 @@ import { FirebaseAuthService } from '../../../core/services/firebase-auth.servic
           <div class="hidden md:flex items-center gap-4">
             <!-- Theme toggle -->
             <button (click)="toggleTheme()" title="Toggle light/dark theme"
-                    class="w-9 h-9 rounded-lg bg-dark-600 hover:bg-dark-500 flex items-center justify-center transition-colors">
+                    class="w-9 h-9 rounded-lg bg-light-600 hover:bg-light-500 flex items-center justify-center transition-colors">
               @if (isDark()) {
                 <svg class="w-5 h-5 text-yellow-300" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.166 17.834a.75.75 0 00-1.06 1.06l1.59 1.591a.75.75 0 001.061-1.06l-1.59-1.591zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.166 6.106a.75.75 0 00-1.06 1.06l1.59 1.591a.75.75 0 001.061-1.06L6.166 6.106z"/>

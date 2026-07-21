@@ -14,20 +14,20 @@ import { Gym } from '../../../core/models';
         <img [src]="gym.images[0]" [alt]="gym.name"
              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
         <div class="absolute inset-0 bg-gradient-to-t from-dark-900/80 to-transparent"></div>
-        <!-- Tags -->
-        <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
+        <!-- Tags: stacked vertically so they never overlap the price badge -->
+        <div class="absolute top-3 left-3 flex flex-col gap-1.5">
           @if (gym.featured) {
-            <span class="badge bg-primary text-white">⭐ Featured</span>
+            <span class="badge bg-primary text-white self-start">⭐ Featured</span>
           }
           @if (gym.openNow) {
-            <span class="badge bg-green-500/90 text-white">● Open Now</span>
+            <span class="badge bg-green-500/90 text-white self-start">● Open Now</span>
           } @else {
-            <span class="badge bg-gray-600/90 text-white">● Closed</span>
+            <span class="badge bg-gray-600/90 text-white self-start">● Closed</span>
           }
         </div>
         <!-- Price -->
         <div class="absolute top-3 right-3">
-          <span class="bg-dark-900/90 text-white font-bold text-sm px-3 py-1.5 rounded-lg">{{gym.priceLabel}}</span>
+          <span class="gym-card-overlay-badge font-bold text-sm px-3 py-1.5 rounded-lg whitespace-nowrap">{{gym.priceLabel}}</span>
         </div>
         <!-- Rating overlay -->
         <div class="absolute bottom-3 left-3 flex items-center gap-1.5">
@@ -36,8 +36,8 @@ import { Gym } from '../../../core/models';
               <span>{{s}}</span>
             }
           </div>
-          <span class="text-white text-sm font-semibold">{{gym.rating}}</span>
-          <span class="text-gray-300 text-xs">({{gym.reviewCount}})</span>
+          <span class="gym-card-overlay-text text-sm font-semibold">{{gym.rating}}</span>
+          <span class="gym-card-overlay-sub text-xs">({{gym.reviewCount}})</span>
         </div>
       </div>
 
