@@ -3,13 +3,14 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FirebaseAuthService } from '../../../core/services/firebase-auth.service';
+import { RequestableRole } from '../../../core/models';
 
 @Component({
   selector: 'app-register',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   template: `
-    <section class="min-h-screen bg-dark-900 flex items-center justify-center px-4 py-24">
+    <section class="page-min bg-dark-900 flex items-center justify-center px-4 py-24">
       <div class="w-full max-w-md">
         <div class="text-center mb-10">
           <div class="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -27,11 +28,38 @@ import { FirebaseAuthService } from '../../../core/services/firebase-auth.servic
           }
           @if (success()) {
             <div class="bg-green-500/10 border border-green-500/30 rounded-xl p-4 mb-6 text-green-400 text-sm">
-              ✓ Account created! Redirecting...
+              @if (requestedRole() === 'owner') {
+                ✓ Account created — your gym owner request is pending approval. Redirecting...
+              } @else {
+                ✓ Account created! Redirecting...
+              }
             </div>
           }
 
           <form (ngSubmit)="register()" #regForm="ngForm" class="space-y-5">
+            <div>
+              <label class="text-gray-400 text-sm font-medium mb-2 block">I'm signing up as</label>
+              <div class="grid grid-cols-2 gap-3">
+                <button type="button" (click)="requestedRole.set('user')"
+                        [class]="requestedRole() === 'user' ? 'role-option role-option-active' : 'role-option'">
+                  <span class="text-2xl">🏃</span>
+                  <span class="font-semibold text-sm">Member</span>
+                  <span class="text-xs opacity-70">Find gyms &amp; trainers</span>
+                </button>
+                <button type="button" (click)="requestedRole.set('owner')"
+                        [class]="requestedRole() === 'owner' ? 'role-option role-option-active' : 'role-option'">
+                  <span class="text-2xl">🏢</span>
+                  <span class="font-semibold text-sm">Gym Owner</span>
+                  <span class="text-xs opacity-70">List &amp; manage gyms</span>
+                </button>
+              </div>
+              @if (requestedRole() === 'owner') {
+                <p class="text-amber-400/90 text-xs mt-2 leading-relaxed">
+                  ⓘ Gym owner accounts are reviewed by our team. You can sign in straight
+                  away, but managing listings unlocks once an admin approves you.
+                </p>
+              }
+            </div>
             <div>
               <label class="text-gray-400 text-sm font-medium mb-2 block">Full Name</label>
               <input name="name" [(ngModel)]="name" required placeholder="John Doe" class="input-field">
@@ -90,18 +118,26 @@ export class RegisterComponent {
   private router = inject(Router);
 
   name = ''; email = ''; password = ''; confirm = '';
+  requestedRole = signal<RequestableRole>('user');
   error = signal('');
   success = signal(false);
   loading = signal(false);
+
+  /** Owners land on their console (which explains the pending state). */
+  private landingRoute() {
+    return this.requestedRole() === 'owner' ? '/owner' : '/dashboard';
+  }
 
   async register() {
     if (this.password !== this.confirm) return;
     this.loading.set(true);
     this.error.set('');
     try {
-      await this.authSvc.registerWithEmail(this.email, this.password);
+      await this.authSvc.registerWithEmail(
+        this.email, this.password, this.name, this.requestedRole(),
+      );
       this.success.set(true);
-      setTimeout(() => this.router.navigate(['/']), 1500);
+      setTimeout(() => this.router.navigate([this.landingRoute()]), 1500);
     } catch (e: any) {
       const map: Record<string, string> = {
         'auth/email-already-in-use': 'This email is already registered.',
@@ -117,8 +153,8 @@ export class RegisterComponent {
   async googleSignUp() {
     this.loading.set(true);
     try {
-      await this.authSvc.loginWithGoogle();
-      this.router.navigate(['/']);
+      await this.authSvc.loginWithGoogle(this.requestedRole());
+      this.router.navigate([this.landingRoute()]);
     } catch (e: any) {
       this.error.set('Google sign-up failed. Please try again.');
     } finally {

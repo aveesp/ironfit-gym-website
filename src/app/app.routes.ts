@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard, roleGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -60,6 +61,24 @@ export const routes: Routes = [
     path: 'register',
     loadComponent: () => import('./features/auth/register/register.component').then(m => m.RegisterComponent),
     title: 'Create Account - IronFit'
+  },
+  {
+    path: 'dashboard',
+    loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent),
+    canActivate: [authGuard],
+    title: 'My Account - IronFit'
+  },
+  {
+    path: 'owner',
+    loadComponent: () => import('./features/owner/owner-console.component').then(m => m.OwnerConsoleComponent),
+    canActivate: [roleGuard(['owner', 'admin'])],
+    title: 'Owner Console - IronFit'
+  },
+  {
+    path: 'admin',
+    loadComponent: () => import('./features/admin/admin-console.component').then(m => m.AdminConsoleComponent),
+    canActivate: [roleGuard(['admin'])],
+    title: 'Admin Console - IronFit'
   },
   {
     path: 'services',

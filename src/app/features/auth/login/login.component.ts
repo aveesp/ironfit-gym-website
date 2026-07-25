@@ -9,7 +9,7 @@ import { FirebaseAuthService } from '../../../core/services/firebase-auth.servic
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   template: `
-    <section class="min-h-screen bg-dark-900 flex items-center justify-center px-4 py-24">
+    <section class="page-min bg-dark-900 flex items-center justify-center px-4 py-24">
       <div class="w-full max-w-md">
         <!-- Logo -->
         <div class="text-center mb-10">

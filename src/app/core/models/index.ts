@@ -85,3 +85,20 @@ export interface FAQ {
   question: string;
   answer: string;
 }
+
+export type UserRole = 'user' | 'owner' | 'admin';
+export type UserStatus = 'active' | 'pending' | 'rejected';
+
+/** Roles a user may pick at signup — 'admin' is never self-assignable. */
+export type RequestableRole = Extract<UserRole, 'user' | 'owner'>;
+
+export interface UserProfile {
+  uid: string;
+  email: string | null;
+  displayName: string;
+  role: UserRole;
+  status: UserStatus;
+  createdAt: string;
+  approvedAt: string | null;
+  approvedBy: string | null;
+}

@@ -1,5 +1,5 @@
 import { Component, signal, HostListener, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FirebaseAuthService } from '../../../core/services/firebase-auth.service';
 
@@ -49,7 +49,17 @@ import { FirebaseAuthService } from '../../../core/services/firebase-auth.servic
             </button>
             <a routerLink="/contact" class="text-gray-300 hover:text-white font-medium transition-colors">Contact</a>
             @if (authSvc.currentUser()) {
-              <button (click)="authSvc.logout()" class="btn-secondary text-sm py-2.5">Sign Out</button>
+              <a routerLink="/dashboard" routerLinkActive="text-primary"
+                 class="text-gray-300 hover:text-white font-medium transition-colors">Dashboard</a>
+              @if (authSvc.isApprovedOwner()) {
+                <a routerLink="/owner" routerLinkActive="text-primary"
+                   class="text-gray-300 hover:text-white font-medium transition-colors">My Gyms</a>
+              }
+              @if (authSvc.isAdmin()) {
+                <a routerLink="/admin" routerLinkActive="text-primary"
+                   class="text-primary hover:text-white font-medium transition-colors">Admin</a>
+              }
+              <button (click)="signOut()" class="btn-secondary text-sm py-2.5">Sign Out</button>
             } @else {
               <a routerLink="/login" class="text-gray-300 hover:text-white font-medium transition-colors">Sign In</a>
               <a routerLink="/register" class="btn-primary text-sm py-2.5">Join Today</a>
@@ -79,7 +89,20 @@ import { FirebaseAuthService } from '../../../core/services/firebase-auth.servic
               <a routerLink="/blog" (click)="menuOpen.set(false)" class="px-4 py-3 rounded-lg hover:bg-dark-600 text-gray-300 hover:text-white transition-colors">Blog</a>
               <a routerLink="/about" (click)="menuOpen.set(false)" class="px-4 py-3 rounded-lg hover:bg-dark-600 text-gray-300 hover:text-white transition-colors">About</a>
               <a routerLink="/contact" (click)="menuOpen.set(false)" class="px-4 py-3 rounded-lg hover:bg-dark-600 text-gray-300 hover:text-white transition-colors">Contact</a>
-              <a routerLink="/gyms" (click)="menuOpen.set(false)" class="btn-primary justify-center mt-2">Join Today</a>
+
+              @if (authSvc.currentUser()) {
+                <div class="h-px bg-dark-500 my-2"></div>
+                <a routerLink="/dashboard" (click)="menuOpen.set(false)" class="px-4 py-3 rounded-lg hover:bg-dark-600 text-gray-300 hover:text-white transition-colors">Dashboard</a>
+                @if (authSvc.isApprovedOwner()) {
+                  <a routerLink="/owner" (click)="menuOpen.set(false)" class="px-4 py-3 rounded-lg hover:bg-dark-600 text-gray-300 hover:text-white transition-colors">My Gyms</a>
+                }
+                @if (authSvc.isAdmin()) {
+                  <a routerLink="/admin" (click)="menuOpen.set(false)" class="px-4 py-3 rounded-lg hover:bg-dark-600 text-primary hover:text-white transition-colors">Admin Console</a>
+                }
+                <button (click)="signOut(); menuOpen.set(false)" class="btn-secondary justify-center mt-2">Sign Out</button>
+              } @else {
+                <a routerLink="/register" (click)="menuOpen.set(false)" class="btn-primary justify-center mt-2">Join Today</a>
+              }
             </div>
           </div>
         }
@@ -89,6 +112,7 @@ import { FirebaseAuthService } from '../../../core/services/firebase-auth.servic
 })
 export class NavbarComponent {
   authSvc = inject(FirebaseAuthService);
+  private router = inject(Router);
   scrolled = signal(false);
   menuOpen = signal(false);
   isDark = signal(true);
@@ -102,6 +126,13 @@ export class NavbarComponent {
 
   @HostListener('window:scroll')
   onScroll() { this.scrolled.set(window.scrollY > 50); }
+
+  /** Navigate away on sign-out — guards don't re-run for the current route,
+   *  so without this you'd be left sitting on a page you can no longer access. */
+  async signOut() {
+    await this.authSvc.logout();
+    this.router.navigate(['/']);
+  }
 
   toggleTheme() {
     const dark = !this.isDark();
