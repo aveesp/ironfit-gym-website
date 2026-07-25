@@ -418,9 +418,10 @@ export class DataService {
 
   getPlans(): MembershipPlan[] { return this.plans; }
 
-  getBlogs(): BlogPost[] { return this.blogs; }
+  // newest first — dates are ISO (YYYY-MM-DD) so a string sort is chronological
+  getBlogs(): BlogPost[] { return [...this.blogs].sort((a, b) => b.date.localeCompare(a.date)); }
   getBlogBySlug(slug: string): BlogPost | undefined { return this.blogs.find(b => b.slug === slug); }
-  getLatestBlogs(count = 3): BlogPost[] { return this.blogs.slice(0, count); }
+  getLatestBlogs(count = 3): BlogPost[] { return this.getBlogs().slice(0, count); }
 
   getFaqs(): FAQ[] { return this.faqs; }
 }

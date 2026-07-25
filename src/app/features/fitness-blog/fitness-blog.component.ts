@@ -112,7 +112,8 @@ export class FitnessBlogComponent {
   filteredPosts = signal<BlogPost[]>(this.allPosts);
   activeCategory = signal('All');
   search = '';
-  categories = ['All', 'Strength Training', 'Weight Loss', 'Wellness', 'Nutrition', 'CrossFit', 'Swimming'];
+  // derived from the posts so a new category never needs a manual pill added here
+  categories = ['All', ...new Set(this.allPosts.map(p => p.category))];
 
   filterPosts() {
     let posts = this.allPosts;
