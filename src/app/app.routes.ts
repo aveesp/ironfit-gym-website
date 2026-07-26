@@ -71,14 +71,121 @@ export const routes: Routes = [
   {
     path: 'owner',
     loadComponent: () => import('./features/owner/owner-console.component').then(m => m.OwnerConsoleComponent),
-    canActivate: [roleGuard(['owner', 'admin'])],
+    canActivate: [roleGuard(['owner', 'admin', 'superadmin'])],
     title: 'Owner Console - IronFit'
   },
   {
     path: 'admin',
-    loadComponent: () => import('./features/admin/admin-console.component').then(m => m.AdminConsoleComponent),
-    canActivate: [roleGuard(['admin'])],
-    title: 'Admin Console - IronFit'
+    loadComponent: () => import('./features/admin/admin-portal.component').then(m => m.AdminPortalComponent),
+    canActivate: [roleGuard(['admin', 'superadmin'])],
+    title: 'Admin Portal - IronFit',
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+
+      // ── Backed by real data ──
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./features/admin/pages/dashboard.component').then(m => m.AdminDashboardComponent),
+      },
+      {
+        path: 'gyms',
+        loadComponent: () => import('./features/admin/pages/gyms.component').then(m => m.AdminGymsComponent),
+      },
+      {
+        path: 'gym-owners',
+        loadComponent: () => import('./features/admin/pages/gym-owners.component').then(m => m.AdminGymOwnersComponent),
+      },
+      {
+        path: 'blogs',
+        loadComponent: () => import('./features/admin/pages/blogs.component').then(m => m.AdminBlogsComponent),
+      },
+      {
+        path: 'users',
+        loadComponent: () => import('./features/admin/pages/users.component').then(m => m.AdminUsersComponent),
+      },
+      {
+        path: 'bookings',
+        loadComponent: () => import('./features/admin/pages/bookings.component').then(m => m.AdminBookingsComponent),
+      },
+
+      // ── Scaffolded: structure in place, no data model yet ──
+      {
+        path: 'offers',
+        loadComponent: () => import('./features/admin/pages/placeholder.component').then(m => m.AdminPlaceholderComponent),
+        data: {
+          title: 'Offer Management', icon: '🎟️',
+          summary: 'Promotions, discount codes and seasonal campaigns.',
+          planned: ['Create and expire discount codes', 'Per-gym and sitewide offers', 'Usage limits and redemption tracking'],
+        },
+      },
+      {
+        path: 'membership',
+        loadComponent: () => import('./features/admin/pages/placeholder.component').then(m => m.AdminPlaceholderComponent),
+        data: {
+          title: 'Membership Management', icon: '💳',
+          summary: 'Plans, pricing tiers and active subscriptions.',
+          planned: ['Edit the plans shown on /plans', 'View and cancel active memberships', 'Renewal and churn tracking'],
+        },
+      },
+      {
+        path: 'nutrition',
+        loadComponent: () => import('./features/admin/pages/placeholder.component').then(m => m.AdminPlaceholderComponent),
+        data: {
+          title: 'Nutrition Management', icon: '🥗',
+          summary: 'Meal plans, recipes and macro templates.',
+          planned: ['Build reusable meal plans', 'Recipe library with macros', 'Assign plans to members'],
+        },
+      },
+      {
+        path: 'fitness-content',
+        loadComponent: () => import('./features/admin/pages/placeholder.component').then(m => m.AdminPlaceholderComponent),
+        data: {
+          title: 'Fitness Content Management', icon: '🎬',
+          summary: 'Workout programmes, exercise library and videos.',
+          planned: ['Exercise library with demo videos', 'Structured workout programmes', 'Difficulty and equipment tagging'],
+        },
+      },
+      {
+        path: 'reviews',
+        loadComponent: () => import('./features/admin/pages/placeholder.component').then(m => m.AdminPlaceholderComponent),
+        data: {
+          title: 'Review Management', icon: '⭐',
+          summary: 'Moderate gym and trainer reviews.',
+          planned: ['Approve, hide or remove reviews', 'Flag suspected fake reviews', 'Respond on behalf of a gym'],
+        },
+      },
+      {
+        path: 'notifications',
+        loadComponent: () => import('./features/admin/pages/placeholder.component').then(m => m.AdminPlaceholderComponent),
+        data: {
+          title: 'Notification Management', icon: '🔔',
+          summary: 'Email, push and in-app messaging.',
+          planned: ['Broadcast announcements', 'Transactional email templates', 'Per-user notification preferences'],
+        },
+      },
+
+      // ── Super admin only ──
+      {
+        path: 'reports',
+        loadComponent: () => import('./features/admin/pages/placeholder.component').then(m => m.AdminPlaceholderComponent),
+        canActivate: [roleGuard(['superadmin'])],
+        data: {
+          title: 'Reports & Analytics', icon: '📈',
+          summary: 'Revenue, growth and engagement reporting.',
+          planned: ['Signup and retention curves', 'Revenue by plan and by gym', 'Exportable CSV reports'],
+        },
+      },
+      {
+        path: 'cms',
+        loadComponent: () => import('./features/admin/pages/placeholder.component').then(m => m.AdminPlaceholderComponent),
+        canActivate: [roleGuard(['superadmin'])],
+        data: {
+          title: 'CMS Management', icon: '🧩',
+          summary: 'Site copy, landing pages and navigation.',
+          planned: ['Edit homepage and landing copy', 'Manage footer and nav links', 'FAQ and legal page content'],
+        },
+      },
+    ],
   },
   {
     path: 'services',

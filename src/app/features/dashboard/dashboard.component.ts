@@ -113,6 +113,7 @@ export class DashboardComponent implements OnInit {
 
   roleLabel() {
     const role = this.auth.role();
+    if (role === 'superadmin') return 'Super Admin';
     if (role === 'admin') return 'Administrator';
     if (role === 'owner') return this.auth.isApprovedOwner() ? 'Gym Owner' : 'Gym Owner (pending)';
     return 'Member';

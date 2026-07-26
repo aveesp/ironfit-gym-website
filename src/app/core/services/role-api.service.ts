@@ -1,7 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { FirebaseAuthService } from './firebase-auth.service';
-import { Gym, UserProfile, UserRole } from '../models';
+import {
+  AdminStats, Booking, BookingStatus, BlogPost, Gym, UserProfile, UserRole,
+} from '../models';
 
 /**
  * Authenticated calls to the owner/admin endpoints.
@@ -28,7 +30,8 @@ export class RoleApiService {
       const body = await res.json().catch(() => ({} as any));
       throw new Error(body.error || `Request failed (${res.status})`);
     }
-    return res.json();
+    // 204s and empty bodies would blow up res.json().
+    return res.status === 204 ? (undefined as T) : res.json();
   }
 
   // ── Owner ──
@@ -36,7 +39,12 @@ export class RoleApiService {
     return this.request<Gym[]>('/owner/gyms');
   }
 
-  // ── Admin ──
+  // ── Dashboard ──
+  getStats() {
+    return this.request<AdminStats>('/admin/stats');
+  }
+
+  // ── Users & owners ──
   getUsers() {
     return this.request<UserProfile[]>('/admin/users');
   }
@@ -58,5 +66,53 @@ export class RoleApiService {
       method: 'PATCH',
       body: JSON.stringify({ role }),
     });
+  }
+
+  // ── Gyms ──
+  getGyms() {
+    return this.request<Gym[]>('/gyms');
+  }
+
+  deleteGym(id: string) {
+    return this.request<{ success: boolean }>(`/gyms/${id}`, { method: 'DELETE' });
+  }
+
+  updateGym(id: string, changes: Partial<Gym>) {
+    return this.request<{ success: boolean }>(`/gyms/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(changes),
+    });
+  }
+
+  // ── Blogs ──
+  getBlogs() {
+    return this.request<BlogPost[]>('/blogs');
+  }
+
+  deleteBlog(id: string) {
+    return this.request<{ success: boolean }>(`/blogs/${id}`, { method: 'DELETE' });
+  }
+
+  updateBlog(id: string, changes: Partial<BlogPost>) {
+    return this.request<{ success: boolean }>(`/blogs/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(changes),
+    });
+  }
+
+  // ── Bookings (gym enquiries) ──
+  getBookings() {
+    return this.request<Booking[]>('/inquiries');
+  }
+
+  updateBookingStatus(id: string, status: BookingStatus) {
+    return this.request<{ success: boolean }>(`/inquiries/${id}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status }),
+    });
+  }
+
+  deleteBooking(id: string) {
+    return this.request<{ success: boolean }>(`/inquiries/${id}`, { method: 'DELETE' });
   }
 }

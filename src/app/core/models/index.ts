@@ -86,8 +86,31 @@ export interface FAQ {
   answer: string;
 }
 
-export type UserRole = 'user' | 'owner' | 'admin';
+export type UserRole = 'user' | 'owner' | 'admin' | 'superadmin';
 export type UserStatus = 'active' | 'pending' | 'rejected';
+
+/** Lifecycle of a booking enquiry as it is worked by staff. */
+export type BookingStatus = 'pending' | 'contacted' | 'converted' | 'closed';
+
+export interface Booking {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  interest: string;
+  message: string;
+  gymId: string | null;
+  gymName: string | null;
+  status: BookingStatus;
+  createdAt: string;
+}
+
+export interface AdminStats {
+  users: { total: number; members: number; owners: number; admins: number; pendingOwners: number };
+  gyms: { total: number; featured: number };
+  blogs: { total: number };
+  bookings: { total: number; pending: number };
+}
 
 /** Roles a user may pick at signup — 'admin' is never self-assignable. */
 export type RequestableRole = Extract<UserRole, 'user' | 'owner'>;

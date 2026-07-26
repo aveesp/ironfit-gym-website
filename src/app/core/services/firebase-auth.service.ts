@@ -20,7 +20,10 @@ export class FirebaseAuthService {
   loading = signal(true);
 
   isLoggedIn = computed(() => !!this.currentUser());
-  isAdmin = computed(() => this.role() === 'admin');
+  /** Admin portal access — true for both admin tiers. */
+  isAdmin = computed(() => this.role() === 'admin' || this.role() === 'superadmin');
+  /** Elevated: manages admins, CMS and system-level settings. */
+  isSuperAdmin = computed(() => this.role() === 'superadmin');
   isOwner = computed(() => this.role() === 'owner');
   /** An owner can only act once an admin has approved the account. */
   isApprovedOwner = computed(() => this.isOwner() && this.status() === 'active');
