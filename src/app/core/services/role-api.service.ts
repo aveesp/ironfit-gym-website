@@ -73,6 +73,13 @@ export class RoleApiService {
     return this.request<Gym[]>('/gyms');
   }
 
+  createGym(gym: Partial<Gym>) {
+    return this.request<Gym>('/gyms', {
+      method: 'POST',
+      body: JSON.stringify(gym),
+    });
+  }
+
   deleteGym(id: string) {
     return this.request<{ success: boolean }>(`/gyms/${id}`, { method: 'DELETE' });
   }
