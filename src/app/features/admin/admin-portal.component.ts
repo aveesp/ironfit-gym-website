@@ -27,7 +27,7 @@ export const PORTAL_SECTIONS: PortalSection[] = [
   { path: 'bookings',        label: 'Booking Management',         icon: '📅', ready: true },
   { path: 'reports',         label: 'Reports & Analytics',        icon: '📈', superOnly: true },
   { path: 'notifications',   label: 'Notification Management',    icon: '🔔' },
-  { path: 'cms',             label: 'CMS Management',             icon: '🧩', superOnly: true },
+  { path: 'cms',             label: 'CMS Management',             icon: '🧩', superOnly: true, ready: true },
 ];
 
 @Component({

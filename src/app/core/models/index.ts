@@ -105,6 +105,48 @@ export interface Booking {
   createdAt: string;
 }
 
+// ── CMS ──
+export interface CmsSite {
+  siteName: string;
+  tagline: string;
+  email: string;
+  phone: string;
+  address: string;
+  instagram: string;
+  facebook: string;
+  youtube: string;
+  twitter: string;
+}
+
+export interface CmsHome {
+  heroBadge: string;
+  heroTitle: string;
+  heroHighlight: string;
+  heroTitleEnd: string;
+  heroSubtitle: string;
+  ctaPrimary: string;
+  ctaSecondary: string;
+  statGyms: string;
+  statGymsLabel: string;
+  statTrainers: string;
+  statTrainersLabel: string;
+  statMembers: string;
+  statMembersLabel: string;
+}
+
+export interface CmsFaqItem {
+  question: string;
+  answer: string;
+}
+
+export interface CmsContent {
+  site: CmsSite;
+  home: CmsHome;
+  faqs: { items: CmsFaqItem[] };
+}
+
+export type CmsSectionName = keyof CmsContent;
+
 export interface AdminStats {
   users: { total: number; members: number; owners: number; admins: number; pendingOwners: number };
   gyms: { total: number; featured: number };

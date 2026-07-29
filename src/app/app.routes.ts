@@ -177,13 +177,8 @@ export const routes: Routes = [
       },
       {
         path: 'cms',
-        loadComponent: () => import('./features/admin/pages/placeholder.component').then(m => m.AdminPlaceholderComponent),
+        loadComponent: () => import('./features/admin/pages/cms.component').then(m => m.AdminCmsComponent),
         canActivate: [roleGuard(['superadmin'])],
-        data: {
-          title: 'CMS Management', icon: '🧩',
-          summary: 'Site copy, landing pages and navigation.',
-          planned: ['Edit homepage and landing copy', 'Manage footer and nav links', 'FAQ and legal page content'],
-        },
       },
     ],
   },

@@ -2,7 +2,8 @@ import { Injectable, inject } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { FirebaseAuthService } from './firebase-auth.service';
 import {
-  AdminStats, Booking, BookingStatus, BlogPost, Gym, UserProfile, UserRole,
+  AdminStats, Booking, BookingStatus, BlogPost, CmsContent, CmsSectionName,
+  Gym, UserProfile, UserRole,
 } from '../models';
 
 /**
@@ -104,6 +105,18 @@ export class RoleApiService {
     return this.request<{ success: boolean }>(`/blogs/${id}`, {
       method: 'PUT',
       body: JSON.stringify(changes),
+    });
+  }
+
+  // ── CMS ──
+  getCms() {
+    return this.request<CmsContent>('/cms');
+  }
+
+  updateCmsSection<K extends CmsSectionName>(section: K, content: CmsContent[K]) {
+    return this.request<CmsContent[K]>(`/cms/${section}`, {
+      method: 'PUT',
+      body: JSON.stringify(content),
     });
   }
 

@@ -656,6 +656,86 @@
   .admin-field small  { color: #94a3b8 !important; }
   .admin-check-row label { color: #374151 !important; }
 }
+/* ── CMS editor ── */
+.admin-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+.admin-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1.1rem;
+  border-radius: 2rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #9ca3af;
+  background-color: #1c1c1c;
+  border: 1px solid #333;
+  transition: all 0.15s;
+  &:hover { color: #ffffff; border-color: rgba(230,0,0,0.4); }
+}
+.admin-tab-active {
+  background-color: rgba(230,0,0,0.12) !important;
+  border-color: #e60000 !important;
+  color: #ffffff !important;
+}
+
+.admin-stat-inputs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
+}
+
+.admin-faq-row {
+  display: flex;
+  gap: 0.9rem;
+  align-items: flex-start;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background-color: #1f1f1f;
+  border: 1px solid #333;
+}
+.admin-faq-num {
+  flex-shrink: 0;
+  width: 1.9rem; height: 1.9rem;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(230,0,0,0.15);
+  color: #e60000;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.admin-faq-fields {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  textarea { resize: vertical; font-family: inherit; }
+}
+
+.light-theme {
+  .admin-tab {
+    background-color: #f1f5f9 !important;
+    border-color: #cbd5e1 !important;
+    color: #475569 !important;
+    &:hover { color: #0f172a !important; }
+  }
+  .admin-tab-active {
+    background-color: rgba(230,0,0,0.08) !important;
+    border-color: #e60000 !important;
+    color: #0f172a !important;
+  }
+  .admin-faq-row {
+    background-color: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+  }
+  .admin-faq-num { background: rgba(230,0,0,0.08) !important; }
+}
 /* ===== END ADMIN PORTAL ===== */
 
 /* ===== END ROLES & DASHBOARDS ===== */
