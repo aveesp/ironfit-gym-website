@@ -111,12 +111,7 @@ export const routes: Routes = [
       // ── Scaffolded: structure in place, no data model yet ──
       {
         path: 'offers',
-        loadComponent: () => import('./features/admin/pages/placeholder.component').then(m => m.AdminPlaceholderComponent),
-        data: {
-          title: 'Offer Management', icon: '🎟️',
-          summary: 'Promotions, discount codes and seasonal campaigns.',
-          planned: ['Create and expire discount codes', 'Per-gym and sitewide offers', 'Usage limits and redemption tracking'],
-        },
+        loadComponent: () => import('./features/admin/pages/offers.component').then(m => m.AdminOffersComponent),
       },
       {
         path: 'membership',

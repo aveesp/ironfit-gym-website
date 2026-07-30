@@ -105,6 +105,31 @@ export interface Booking {
   createdAt: string;
 }
 
+// ── Offers ──
+export type OfferType = 'percentage' | 'fixed';
+export type OfferScope = 'sitewide' | 'gym';
+
+export interface Offer {
+  id: string;
+  code: string;
+  title: string;
+  description: string;
+  type: OfferType;
+  value: number;
+  scope: OfferScope;
+  gymId: string | null;
+  gymName: string | null;
+  validFrom: string;
+  validUntil: string;
+  /** 0 means unlimited. */
+  usageLimit: number;
+  usedCount: number;
+  active: boolean;
+  /** Server-computed: active, in date, and not exhausted. Admin list only. */
+  live?: boolean;
+  createdAt: string;
+}
+
 // ── CMS ──
 export interface CmsSite {
   siteName: string;

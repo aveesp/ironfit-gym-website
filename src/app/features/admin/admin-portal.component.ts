@@ -17,7 +17,7 @@ export const PORTAL_SECTIONS: PortalSection[] = [
   { path: 'dashboard',       label: 'Dashboard',                  icon: '📊', ready: true },
   { path: 'gyms',            label: 'Gym Management',             icon: '🏋️', ready: true },
   { path: 'gym-owners',      label: 'Gym Owner Management',       icon: '🤝', ready: true },
-  { path: 'offers',          label: 'Offer Management',           icon: '🎟️' },
+  { path: 'offers',          label: 'Offer Management',           icon: '🎟️', ready: true },
   { path: 'membership',      label: 'Membership Management',      icon: '💳' },
   { path: 'nutrition',       label: 'Nutrition Management',       icon: '🥗' },
   { path: 'fitness-content', label: 'Fitness Content Management', icon: '🎬' },

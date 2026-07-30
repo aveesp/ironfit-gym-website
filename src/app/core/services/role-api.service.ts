@@ -3,7 +3,7 @@ import { environment } from '../../../environments/environment';
 import { FirebaseAuthService } from './firebase-auth.service';
 import {
   AdminStats, Booking, BookingStatus, BlogPost, CmsContent, CmsSectionName,
-  Gym, UserProfile, UserRole,
+  Gym, Offer, UserProfile, UserRole,
 } from '../models';
 
 /**
@@ -106,6 +106,27 @@ export class RoleApiService {
       method: 'PUT',
       body: JSON.stringify(changes),
     });
+  }
+
+  // ── Offers ──
+  /** Everything, including expired and inactive — the admin view. */
+  getAllOffers() {
+    return this.request<Offer[]>('/offers/all');
+  }
+
+  createOffer(offer: Partial<Offer>) {
+    return this.request<Offer>('/offers', {
+      method: 'POST',
+      body: JSON.stringify(offer),
+    });
+  }
+
+  toggleOffer(id: string) {
+    return this.request<{ id: string; active: boolean }>(`/offers/${id}/toggle`, { method: 'PATCH' });
+  }
+
+  deleteOffer(id: string) {
+    return this.request<{ success: boolean }>(`/offers/${id}`, { method: 'DELETE' });
   }
 
   // ── CMS ──

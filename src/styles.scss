@@ -656,6 +656,25 @@
   .admin-field small  { color: #94a3b8 !important; }
   .admin-check-row label { color: #374151 !important; }
 }
+/* ── Offer codes ── */
+.admin-code {
+  display: inline-block;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0.25rem 0.6rem;
+  border-radius: 0.4rem;
+  background: rgba(230,0,0,0.12);
+  border: 1px dashed rgba(230,0,0,0.4);
+  color: #ff6b6b;
+}
+.light-theme .admin-code {
+  background: rgba(230,0,0,0.07) !important;
+  border-color: rgba(230,0,0,0.3) !important;
+  color: #b91c1c !important;
+}
+
 /* ── CMS editor ── */
 .admin-tabs {
   display: flex;
