@@ -27,6 +27,7 @@ import { FirebaseAuthService } from '../../../core/services/firebase-auth.servic
             <a routerLink="/" routerLinkActive="text-primary" [routerLinkActiveOptions]="{exact:true}" class="nav-link pb-1">Home</a>
             <a routerLink="/gyms" routerLinkActive="text-primary" class="nav-link pb-1">Find Gyms</a>
             <a routerLink="/trainers" routerLinkActive="text-primary" class="nav-link pb-1">Trainers</a>
+            <a routerLink="/nutritionists" routerLinkActive="text-primary" class="nav-link pb-1">Nutrition</a>
             <a routerLink="/plans" routerLinkActive="text-primary" class="nav-link pb-1">Membership</a>
             <a routerLink="/blog" routerLinkActive="text-primary" class="nav-link pb-1">Blog</a>
             <a routerLink="/about" routerLinkActive="text-primary" class="nav-link pb-1">About</a>
@@ -85,6 +86,7 @@ import { FirebaseAuthService } from '../../../core/services/firebase-auth.servic
               <a routerLink="/" (click)="menuOpen.set(false)" class="px-4 py-3 rounded-lg hover:bg-dark-600 text-gray-300 hover:text-white transition-colors">Home</a>
               <a routerLink="/gyms" (click)="menuOpen.set(false)" class="px-4 py-3 rounded-lg hover:bg-dark-600 text-gray-300 hover:text-white transition-colors">Find Gyms</a>
               <a routerLink="/trainers" (click)="menuOpen.set(false)" class="px-4 py-3 rounded-lg hover:bg-dark-600 text-gray-300 hover:text-white transition-colors">Trainers</a>
+              <a routerLink="/nutritionists" (click)="menuOpen.set(false)" class="px-4 py-3 rounded-lg hover:bg-dark-600 text-gray-300 hover:text-white transition-colors">Nutrition</a>
               <a routerLink="/plans" (click)="menuOpen.set(false)" class="px-4 py-3 rounded-lg hover:bg-dark-600 text-gray-300 hover:text-white transition-colors">Membership</a>
               <a routerLink="/blog" (click)="menuOpen.set(false)" class="px-4 py-3 rounded-lg hover:bg-dark-600 text-gray-300 hover:text-white transition-colors">Blog</a>
               <a routerLink="/about" (click)="menuOpen.set(false)" class="px-4 py-3 rounded-lg hover:bg-dark-600 text-gray-300 hover:text-white transition-colors">About</a>

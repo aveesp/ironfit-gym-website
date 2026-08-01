@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, from, switchMap, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { FirebaseAuthService } from './firebase-auth.service';
-import { Gym, Trainer, MembershipPlan, BlogPost } from '../models';
+import { Gym, Trainer, MembershipPlan, BlogPost, Nutritionist } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
@@ -56,8 +56,25 @@ export class ApiService {
     return this.http.get<BlogPost>(`${this.base}/blogs/${slug}`);
   }
 
+  // ── Nutritionists ─────────────────────────────────────────
+  getNutritionists(filters?: { specialization?: string; mode?: string; gymId?: string }): Observable<Nutritionist[]> {
+    let params = new HttpParams();
+    if (filters?.specialization) params = params.set('specialization', filters.specialization);
+    if (filters?.mode) params = params.set('mode', filters.mode);
+    if (filters?.gymId) params = params.set('gymId', filters.gymId);
+    return this.http.get<Nutritionist[]>(`${this.base}/nutritionists`, { params });
+  }
+
+  getNutritionistBySlug(slug: string): Observable<Nutritionist> {
+    return this.http.get<Nutritionist>(`${this.base}/nutritionists/${slug}`);
+  }
+
   // ── Inquiries ─────────────────────────────────────────────
-  submitInquiry(data: { name: string; email: string; phone?: string; interest?: string; message: string; gymId?: string; gymName?: string }): Observable<{ id: string }> {
+  submitInquiry(data: {
+    name: string; email: string; phone?: string; interest?: string; message: string;
+    gymId?: string; gymName?: string;
+    nutritionistId?: string; nutritionistName?: string;
+  }): Observable<{ id: string }> {
     return this.http.post<{ id: string }>(`${this.base}/inquiries`, data);
   }
 

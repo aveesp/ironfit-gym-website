@@ -105,6 +105,33 @@ export interface Booking {
   createdAt: string;
 }
 
+// ── Nutritionists ──
+export interface Nutritionist {
+  id: string;
+  name: string;
+  slug: string;
+  photo: string;
+  title: string;
+  bio: string;
+  specializations: string[];
+  certifications: string[];
+  languages: string[];
+  /** Years of practice. */
+  experience: number;
+  consultationFee: number;
+  /** 'Online' and/or 'In-person'. */
+  consultationModes: string[];
+  email: string;
+  phone: string;
+  rating: number;
+  reviewCount: number;
+  clients: number;
+  gymId: string | null;
+  gymName: string | null;
+  active: boolean;
+  createdAt: string;
+}
+
 // ── Offers ──
 export type OfferType = 'percentage' | 'fixed';
 export type OfferScope = 'sitewide' | 'gym';

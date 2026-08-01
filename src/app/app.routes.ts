@@ -124,12 +124,7 @@ export const routes: Routes = [
       },
       {
         path: 'nutrition',
-        loadComponent: () => import('./features/admin/pages/placeholder.component').then(m => m.AdminPlaceholderComponent),
-        data: {
-          title: 'Nutrition Management', icon: '🥗',
-          summary: 'Meal plans, recipes and macro templates.',
-          planned: ['Build reusable meal plans', 'Recipe library with macros', 'Assign plans to members'],
-        },
+        loadComponent: () => import('./features/admin/pages/nutrition.component').then(m => m.AdminNutritionComponent),
       },
       {
         path: 'fitness-content',
@@ -176,6 +171,11 @@ export const routes: Routes = [
         canActivate: [roleGuard(['superadmin'])],
       },
     ],
+  },
+  {
+    path: 'nutritionists',
+    loadComponent: () => import('./features/nutritionists/nutritionists.component').then(m => m.NutritionistsComponent),
+    title: 'Nutritionists - IronFit'
   },
   {
     path: 'services',
