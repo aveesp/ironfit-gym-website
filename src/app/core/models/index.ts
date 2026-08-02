@@ -44,6 +44,14 @@ export interface Trainer {
   gymId?: string;
   gymName?: string;
   reviews: Review[];
+  /** Independent trainer working out of partner gyms rather than employed by one. */
+  freelance?: boolean;
+  /** Monthly fee in ₹. Required for freelance trainers, shown on their card. */
+  monthlyRate?: number;
+  /** Gyms a freelance trainer is available at. */
+  gyms?: { id: string | null; name: string }[];
+  /** Undefined on seeded trainers — only an explicit false hides a profile. */
+  active?: boolean;
 }
 
 export interface MembershipPlan {

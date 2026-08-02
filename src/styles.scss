@@ -656,6 +656,89 @@
   .admin-field small  { color: #94a3b8 !important; }
   .admin-check-row label { color: #374151 !important; }
 }
+/* ── Freelance trainers ── */
+.freelance-badge {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 10;
+  padding: 0.2rem 0.7rem;
+  border-radius: 2rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: rgba(230,0,0,0.9);
+  color: #ffffff;
+}
+
+.trainer-rate {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.2rem;
+  padding: 0.6rem 0;
+  margin-bottom: 0.75rem;
+  border-top: 1px dashed #333;
+  border-bottom: 1px dashed #333;
+}
+.trainer-rate-amount {
+  font-family: 'Oswald', Impact, sans-serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+.trainer-rate-unit { font-size: 0.8rem; color: #9ca3af; }
+.trainer-rate-gyms {
+  font-size: 0.72rem;
+  color: #9ca3af;
+  margin-bottom: 0.9rem;
+  line-height: 1.4;
+}
+
+.freelance-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  color: #d1d5db;
+  font-size: 0.875rem;
+  cursor: pointer;
+  input { width: 1rem; height: 1rem; accent-color: #e60000; cursor: pointer; }
+}
+
+.admin-gym-picker {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.5rem;
+  padding: 0.85rem 1rem;
+  border-radius: 0.6rem;
+  background-color: #1f1f1f;
+  border: 1px solid #333;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #d1d5db;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  input { width: 0.95rem; height: 0.95rem; accent-color: #e60000; cursor: pointer; }
+}
+
+.light-theme {
+  .trainer-rate { border-color: #e2e8f0 !important; }
+  .trainer-rate-amount { color: #0f172a !important; }
+  .trainer-rate-unit, .trainer-rate-gyms { color: #64748b !important; }
+  .freelance-toggle { color: #374151 !important; }
+  .admin-gym-picker {
+    background-color: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+    label { color: #374151 !important; }
+  }
+}
+
 /* ── Nutritionist directory ── */
 .nutritionist-avatar {
   width: 4rem; height: 4rem;

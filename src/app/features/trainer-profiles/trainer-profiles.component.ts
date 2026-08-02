@@ -1,8 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { DataService } from '../../core/services/data.service';
+import { firstValueFrom } from 'rxjs';
+import { ApiService } from '../../core/services/api.service';
 import { TrainerCardComponent } from '../../shared/components/trainer-card/trainer-card.component';
+import { Trainer } from '../../core/models';
 
 @Component({
   selector: 'app-trainer-profiles',
@@ -20,22 +22,52 @@ import { TrainerCardComponent } from '../../shared/components/trainer-card/train
 
     <section class="py-16 bg-dark-900 trainers-filter-section">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Filter pills -->
-        <div class="flex flex-wrap gap-3 mb-10">
-          @for (spec of specializations; track spec) {
-            <button [class]="activeSpec === spec ? 'bg-primary text-white' : 'filter-pill-inactive'"
-                    (click)="activeSpec = spec"
-                    class="px-5 py-2 rounded-full text-sm font-medium transition-all duration-200">
-              {{spec}}
-            </button>
-          }
-        </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          @for (trainer of trainers; track trainer.id) {
-            <app-trainer-card [trainer]="trainer"/>
+        @if (loadError()) {
+          <div class="card p-10 text-center">
+            <div class="text-4xl mb-3">🔌</div>
+            <h2 class="font-display text-xl font-bold text-white uppercase mb-2">Can't load trainers</h2>
+            <p class="text-gray-400">{{ loadError() }}</p>
+          </div>
+        } @else if (loading()) {
+          <p class="text-gray-400">Loading trainers...</p>
+        } @else {
+          <!-- Specialisation pills, derived from the trainers actually listed -->
+          <div class="flex flex-wrap gap-3 mb-6">
+            @for (spec of specializations(); track spec) {
+              <button [class]="activeSpec() === spec ? 'bg-primary text-white' : 'filter-pill-inactive'"
+                      (click)="activeSpec.set(spec)"
+                      class="px-5 py-2 rounded-full text-sm font-medium transition-all duration-200">
+                {{ spec }}
+              </button>
+            }
+          </div>
+
+          @if (freelanceCount() > 0) {
+            <label class="freelance-toggle">
+              <input type="checkbox" [checked]="freelanceOnly()"
+                     (change)="freelanceOnly.set(!freelanceOnly())">
+              Freelance only ({{ freelanceCount() }})
+            </label>
           }
-        </div>
+
+          <p class="text-gray-400 text-sm mb-6">
+            Showing <strong class="text-white">{{ filtered().length }}</strong>
+            {{ filtered().length === 1 ? 'trainer' : 'trainers' }}
+          </p>
+
+          @if (filtered().length === 0) {
+            <div class="card p-10 text-center">
+              <p class="text-gray-400">No trainers match those filters.</p>
+            </div>
+          } @else {
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              @for (trainer of filtered(); track trainer.id) {
+                <app-trainer-card [trainer]="trainer"/>
+              }
+            </div>
+          }
+        }
       </div>
     </section>
 
@@ -49,9 +81,37 @@ import { TrainerCardComponent } from '../../shared/components/trainer-card/train
     </section>
   `,
 })
-export class TrainerProfilesComponent {
-  private data = inject(DataService);
-  trainers = this.data.getTrainers();
-  activeSpec = 'All';
-  specializations = ['All', 'Strength Training', 'Yoga', 'CrossFit', 'Weight Loss', 'Swimming', 'Bodybuilding'];
+export class TrainerProfilesComponent implements OnInit {
+  private api = inject(ApiService);
+
+  trainers = signal<Trainer[]>([]);
+  loading = signal(true);
+  loadError = signal('');
+
+  activeSpec = signal('All');
+  freelanceOnly = signal(false);
+
+  /** Derived from the data, so a new specialisation never needs a pill added here. */
+  specializations = computed(() =>
+    ['All', ...new Set(this.trainers().flatMap(t => t.specializations ?? []))]);
+
+  freelanceCount = computed(() => this.trainers().filter(t => t.freelance).length);
+
+  filtered = computed(() => {
+    let list = this.trainers();
+    if (this.freelanceOnly()) list = list.filter(t => t.freelance);
+    const spec = this.activeSpec();
+    if (spec !== 'All') list = list.filter(t => t.specializations?.includes(spec));
+    return list;
+  });
+
+  async ngOnInit() {
+    try {
+      this.trainers.set(await firstValueFrom(this.api.getTrainers()));
+    } catch {
+      this.loadError.set('The trainer directory is temporarily unavailable. Please try again shortly.');
+    } finally {
+      this.loading.set(false);
+    }
+  }
 }

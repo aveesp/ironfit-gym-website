@@ -3,7 +3,7 @@ import { environment } from '../../../environments/environment';
 import { FirebaseAuthService } from './firebase-auth.service';
 import {
   AdminStats, Booking, BookingStatus, BlogPost, CmsContent, CmsSectionName,
-  Gym, Nutritionist, Offer, UserProfile, UserRole,
+  Gym, Nutritionist, Offer, Trainer, UserProfile, UserRole,
 } from '../models';
 
 /**
@@ -106,6 +106,27 @@ export class RoleApiService {
       method: 'PUT',
       body: JSON.stringify(changes),
     });
+  }
+
+  // ── Trainers ──
+  /** Everything, including hidden profiles — the admin view. */
+  getAllTrainers() {
+    return this.request<Trainer[]>('/trainers/all');
+  }
+
+  createTrainer(trainer: Record<string, unknown>) {
+    return this.request<Trainer>('/trainers', {
+      method: 'POST',
+      body: JSON.stringify(trainer),
+    });
+  }
+
+  toggleTrainer(id: string) {
+    return this.request<{ id: string; active: boolean }>(`/trainers/${id}/toggle`, { method: 'PATCH' });
+  }
+
+  deleteTrainer(id: string) {
+    return this.request<{ success: boolean }>(`/trainers/${id}`, { method: 'DELETE' });
   }
 
   // ── Nutritionists ──
