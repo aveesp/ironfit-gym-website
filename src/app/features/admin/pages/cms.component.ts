@@ -77,7 +77,7 @@ const TABS: { id: CmsSectionName; label: string; icon: string }[] = [
               <input name="twitter" [(ngModel)]="site.twitter" class="input-field">
             </label>
 
-            <div class="admin-field admin-field-wide">
+            <div class="admin-actions">
               <button type="submit" [disabled]="saving() === 'site'"
                       class="btn-primary disabled:opacity-50">
                 {{ saving() === 'site' ? 'Saving…' : 'Save site details' }}
@@ -136,7 +136,7 @@ const TABS: { id: CmsSectionName; label: string; icon: string }[] = [
               </div>
             </div>
 
-            <div class="admin-field admin-field-wide">
+            <div class="admin-actions">
               <button type="submit" [disabled]="saving() === 'home'"
                       class="btn-primary disabled:opacity-50">
                 {{ saving() === 'home' ? 'Saving…' : 'Save homepage copy' }}

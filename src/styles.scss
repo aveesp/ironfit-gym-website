@@ -635,6 +635,32 @@
   textarea { resize: vertical; font-family: inherit; }
 }
 
+/**
+ * Form action row.
+ *
+ * Deliberately NOT built on .admin-field: that sets flex-direction:column, and
+ * a Tailwind `flex` class alongside it does not reset the direction — so the
+ * buttons stacked vertically and stretched to full width with their labels
+ * pushed left.
+ */
+.admin-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+
+  // Buttons size to their content instead of filling the row.
+  > .btn-primary,
+  > .btn-secondary {
+    width: auto;
+    flex: 0 0 auto;
+    justify-content: center;
+  }
+}
+
 .admin-check-row {
   flex-direction: row;
   flex-wrap: wrap;

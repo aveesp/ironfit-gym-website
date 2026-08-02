@@ -128,7 +128,7 @@ const emptyForm = () => ({
             <small>Comma separated</small>
           </label>
 
-          <div class="admin-field admin-field-wide flex gap-3">
+          <div class="admin-actions">
             <button type="submit" [disabled]="saving() || tForm.invalid"
                     class="btn-primary disabled:opacity-50 disabled:cursor-not-allowed">
               {{ saving() ? 'Onboarding…' : 'Onboard Trainer' }}

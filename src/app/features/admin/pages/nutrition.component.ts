@@ -117,7 +117,7 @@ const emptyForm = () => ({
             <label><input type="checkbox" name="inPerson" [(ngModel)]="form.inPerson"> Consults in person</label>
           </div>
 
-          <div class="admin-field admin-field-wide flex gap-3">
+          <div class="admin-actions">
             <button type="submit" [disabled]="saving() || nutForm.invalid"
                     class="btn-primary disabled:opacity-50 disabled:cursor-not-allowed">
               {{ saving() ? 'Onboarding…' : 'Onboard Nutritionist' }}

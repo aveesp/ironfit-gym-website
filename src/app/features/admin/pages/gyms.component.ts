@@ -120,7 +120,7 @@ const emptyForm = () => ({
             <label><input type="checkbox" name="openNow" [(ngModel)]="form.openNow"> Currently open</label>
           </div>
 
-          <div class="admin-field admin-field-wide flex gap-3">
+          <div class="admin-actions">
             <button type="submit" [disabled]="saving() || gymForm.invalid"
                     class="btn-primary disabled:opacity-50 disabled:cursor-not-allowed">
               {{ saving() ? 'Saving…' : 'Create Gym' }}
