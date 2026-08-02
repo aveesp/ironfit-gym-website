@@ -682,13 +682,28 @@
   .admin-field small  { color: #94a3b8 !important; }
   .admin-check-row label { color: #374151 !important; }
 }
-/* ── Gym listing filters (top bar layout) ── */
-.gym-filter-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+/* ── Gym listing filters (left sidebar) ── */
+
+/* Sticks alongside the results, but scrolls internally when the chip lists are
+   open — otherwise a tall filter panel would run past the bottom of the screen
+   with no way to reach the last chips. */
+.gym-filter-panel {
+  position: sticky;
+  top: 6rem;
+  max-height: calc(100vh - 8rem);
+  overflow-y: auto;
+
+  @media (max-width: 1023px) {
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
+}
+
+.gym-filter-stack {
+  display: flex;
+  flex-direction: column;
   gap: 1.25rem;
-  @media (max-width: 1024px) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  @media (max-width: 640px)  { grid-template-columns: 1fr; }
 }
 
 .price-range {

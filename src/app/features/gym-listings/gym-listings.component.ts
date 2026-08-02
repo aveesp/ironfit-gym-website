@@ -29,157 +29,158 @@ const PRICE_CEILING = 10000;
 
     <section class="py-10 bg-dark-900">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col lg:flex-row gap-8">
 
-        <!-- ── FILTERS (top) ── -->
-        <div class="card p-6 mb-10">
-          <div class="flex items-center justify-between mb-5">
-            <h2 class="font-display font-bold text-white text-lg uppercase">
-              Filters
-              @if (activeFilterCount() > 0) {
-                <span class="filter-count">{{ activeFilterCount() }}</span>
+          <!-- ── FILTERS (left sidebar) ── -->
+          <aside class="lg:w-80 shrink-0">
+            <div class="card p-6 gym-filter-panel">
+              <div class="flex items-center justify-between mb-5">
+                <h2 class="font-display font-bold text-white text-lg uppercase">
+                  Filters
+                  @if (activeFilterCount() > 0) {
+                    <span class="filter-count">{{ activeFilterCount() }}</span>
+                  }
+                </h2>
+                <button (click)="clearFilters()" class="text-primary text-sm hover:text-primary-400 transition-colors">
+                  Clear all
+                </button>
+              </div>
+
+              <div class="gym-filter-stack">
+                <label class="admin-field">
+                  <span>Search</span>
+                  <input [(ngModel)]="searchQuery" (ngModelChange)="search.set($event)"
+                         placeholder="Gym name, area or city…" class="input-field">
+                </label>
+
+                <label class="admin-field">
+                  <span>City</span>
+                  <select [ngModel]="city()" (ngModelChange)="city.set($event)" class="input-field">
+                    <option value="">All cities</option>
+                    @for (c of cities(); track c) { <option [value]="c">{{ c }}</option> }
+                  </select>
+                </label>
+
+                <div class="admin-field">
+                  <span>Monthly budget: ₹{{ minPrice() | number }} – ₹{{ maxPrice() | number }}</span>
+                  <div class="price-range">
+                    <input type="range" [min]="floor" [max]="ceiling" step="250" [value]="minPrice()"
+                           (input)="onMinPrice($event)" class="w-full accent-primary">
+                    <input type="range" [min]="floor" [max]="ceiling" step="250" [value]="maxPrice()"
+                           (input)="onMaxPrice($event)" class="w-full accent-primary">
+                  </div>
+                </div>
+
+                <div class="admin-field">
+                  <span>Minimum rating</span>
+                  <div class="flex items-center gap-1.5">
+                    @for (r of [1,2,3,4,5]; track r) {
+                      <button type="button" (click)="setRating(r)"
+                              [class]="minRating() >= r ? 'text-yellow-400' : 'text-gray-600'"
+                              class="text-2xl hover:text-yellow-400 transition-colors leading-none">★</button>
+                    }
+                  </div>
+                </div>
+
+                <div class="admin-field">
+                  <span>Availability</span>
+                  <div class="flex flex-col gap-2 pt-1">
+                    <label class="gym-check">
+                      <input type="checkbox" [checked]="openNowOnly()" (change)="openNowOnly.set(!openNowOnly())"> Open now
+                    </label>
+                    <label class="gym-check">
+                      <input type="checkbox" [checked]="featuredOnly()" (change)="featuredOnly.set(!featuredOnly())"> Featured only
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- chip filters -->
+              <button type="button" (click)="showMore.set(!showMore())" class="gym-more-toggle">
+                {{ showMore() ? '− Fewer filters' : '+ More filters' }}
+                @if (tagCount() + amenityCount() > 0) {
+                  <span class="filter-count">{{ tagCount() + amenityCount() }}</span>
+                }
+              </button>
+
+              @if (showMore()) {
+                <div class="pt-5 mt-5 border-t border-dark-600 space-y-5">
+                  @if (allTags().length) {
+                    <div>
+                      <span class="gym-chip-label">Facilities</span>
+                      <div class="flex flex-wrap gap-2">
+                        @for (tag of allTags(); track tag) {
+                          <button type="button" (click)="toggleTag(tag)"
+                                  [class]="selectedTags().includes(tag) ? 'gym-chip gym-chip-on' : 'gym-chip'">
+                            {{ tag }}
+                          </button>
+                        }
+                      </div>
+                    </div>
+                  }
+
+                  @if (allAmenities().length) {
+                    <div>
+                      <span class="gym-chip-label">Amenities</span>
+                      <div class="flex flex-wrap gap-2">
+                        @for (a of allAmenities(); track a) {
+                          <button type="button" (click)="toggleAmenity(a)"
+                                  [class]="selectedAmenities().includes(a) ? 'gym-chip gym-chip-on' : 'gym-chip'">
+                            {{ a }}
+                          </button>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
               }
-            </h2>
-            <button (click)="clearFilters()" class="text-primary text-sm hover:text-primary-400 transition-colors">
-              Clear all
-            </button>
-          </div>
-
-          <!-- primary row -->
-          <div class="gym-filter-grid">
-            <label class="admin-field">
-              <span>Search</span>
-              <input [(ngModel)]="searchQuery" (ngModelChange)="search.set($event)"
-                     placeholder="Gym name, area or city…" class="input-field">
-            </label>
-
-            <label class="admin-field">
-              <span>City</span>
-              <select [ngModel]="city()" (ngModelChange)="city.set($event)" class="input-field">
-                <option value="">All cities</option>
-                @for (c of cities(); track c) { <option [value]="c">{{ c }}</option> }
-              </select>
-            </label>
-
-            <label class="admin-field">
-              <span>Sort by</span>
-              <select [ngModel]="sortBy()" (ngModelChange)="sortBy.set($event)" class="input-field">
-                <option value="featured">Featured first</option>
-                <option value="rating">Highest rated</option>
-                <option value="reviews">Most reviewed</option>
-                <option value="price_asc">Price: low to high</option>
-                <option value="price_desc">Price: high to low</option>
-                <option value="name">Name (A–Z)</option>
-              </select>
-            </label>
-
-            <div class="admin-field">
-              <span>Monthly budget: ₹{{ minPrice() | number }} – ₹{{ maxPrice() | number }}</span>
-              <div class="price-range">
-                <input type="range" [min]="floor" [max]="ceiling" step="250" [value]="minPrice()"
-                       (input)="onMinPrice($event)" class="w-full accent-primary">
-                <input type="range" [min]="floor" [max]="ceiling" step="250" [value]="maxPrice()"
-                       (input)="onMaxPrice($event)" class="w-full accent-primary">
-              </div>
             </div>
+          </aside>
 
-            <div class="admin-field">
-              <span>Minimum rating</span>
-              <div class="flex items-center gap-2">
-                @for (r of [1,2,3,4,5]; track r) {
-                  <button type="button" (click)="setRating(r)"
-                          [class]="minRating() >= r ? 'text-yellow-400' : 'text-gray-600'"
-                          class="text-2xl hover:text-yellow-400 transition-colors leading-none">★</button>
-                }
-                @if (minRating() > 0) {
-                  <button type="button" (click)="minRating.set(0)" class="text-gray-500 text-xs ml-1 hover:text-primary">reset</button>
-                }
+          <!-- ── RESULTS (right) ── -->
+          <div class="flex-1 min-w-0">
+            @if (loadError()) {
+              <div class="card p-10 text-center">
+                <div class="text-4xl mb-3">🔌</div>
+                <h3 class="font-display text-xl font-bold text-white uppercase mb-2">Can't load gyms</h3>
+                <p class="text-gray-400">{{ loadError() }}</p>
               </div>
-            </div>
-
-            <div class="admin-field">
-              <span>Availability</span>
-              <div class="flex flex-wrap gap-4 pt-1">
-                <label class="gym-check">
-                  <input type="checkbox" [checked]="openNowOnly()" (change)="openNowOnly.set(!openNowOnly())"> Open now
-                </label>
-                <label class="gym-check">
-                  <input type="checkbox" [checked]="featuredOnly()" (change)="featuredOnly.set(!featuredOnly())"> Featured
-                </label>
+            } @else if (loading()) {
+              <p class="text-gray-400">Loading gyms...</p>
+            } @else {
+              <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                <p class="text-gray-400">
+                  Showing <span class="text-white font-semibold">{{ filteredGyms().length }}</span>
+                  of <span class="text-white font-semibold">{{ totalCount() }}</span> gyms
+                </p>
+                <select [ngModel]="sortBy()" (ngModelChange)="sortBy.set($event)"
+                        class="input-field w-52 text-sm py-2">
+                  <option value="featured">Featured first</option>
+                  <option value="rating">Highest rated</option>
+                  <option value="reviews">Most reviewed</option>
+                  <option value="price_asc">Price: low to high</option>
+                  <option value="price_desc">Price: high to low</option>
+                  <option value="name">Name (A–Z)</option>
+                </select>
               </div>
-            </div>
-          </div>
 
-          <!-- chip filters -->
-          <button type="button" (click)="showMore.set(!showMore())" class="gym-more-toggle">
-            {{ showMore() ? '− Fewer filters' : '+ More filters' }}
-            @if (tagCount() + amenityCount() > 0) {
-              <span class="filter-count">{{ tagCount() + amenityCount() }}</span>
+              @if (filteredGyms().length === 0) {
+                <div class="text-center py-20">
+                  <div class="text-6xl mb-4">🔍</div>
+                  <h3 class="font-display text-2xl text-white mb-2">No gyms found</h3>
+                  <p class="text-gray-400 mb-6">Try widening your filters</p>
+                  <button (click)="clearFilters()" class="btn-primary">Clear filters</button>
+                </div>
+              } @else {
+                <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
+                  @for (gym of filteredGyms(); track gym.id) {
+                    <app-gym-card [gym]="gym"/>
+                  }
+                </div>
+              }
             }
-          </button>
-
-          @if (showMore()) {
-            <div class="pt-5 mt-5 border-t border-dark-600 space-y-5">
-              @if (allTags().length) {
-                <div>
-                  <span class="gym-chip-label">Facilities</span>
-                  <div class="flex flex-wrap gap-2">
-                    @for (tag of allTags(); track tag) {
-                      <button type="button" (click)="toggleTag(tag)"
-                              [class]="selectedTags().includes(tag) ? 'gym-chip gym-chip-on' : 'gym-chip'">
-                        {{ tag }}
-                      </button>
-                    }
-                  </div>
-                </div>
-              }
-
-              @if (allAmenities().length) {
-                <div>
-                  <span class="gym-chip-label">Amenities</span>
-                  <div class="flex flex-wrap gap-2">
-                    @for (a of allAmenities(); track a) {
-                      <button type="button" (click)="toggleAmenity(a)"
-                              [class]="selectedAmenities().includes(a) ? 'gym-chip gym-chip-on' : 'gym-chip'">
-                        {{ a }}
-                      </button>
-                    }
-                  </div>
-                </div>
-              }
-            </div>
-          }
-        </div>
-
-        <!-- ── RESULTS (bottom) ── -->
-        @if (loadError()) {
-          <div class="card p-10 text-center">
-            <div class="text-4xl mb-3">🔌</div>
-            <h3 class="font-display text-xl font-bold text-white uppercase mb-2">Can't load gyms</h3>
-            <p class="text-gray-400">{{ loadError() }}</p>
           </div>
-        } @else if (loading()) {
-          <p class="text-gray-400">Loading gyms...</p>
-        } @else {
-          <p class="text-gray-400 mb-6">
-            Showing <span class="text-white font-semibold">{{ filteredGyms().length }}</span>
-            of <span class="text-white font-semibold">{{ totalCount() }}</span> gyms
-          </p>
-
-          @if (filteredGyms().length === 0) {
-            <div class="text-center py-20">
-              <div class="text-6xl mb-4">🔍</div>
-              <h3 class="font-display text-2xl text-white mb-2">No gyms found</h3>
-              <p class="text-gray-400 mb-6">Try widening your filters</p>
-              <button (click)="clearFilters()" class="btn-primary">Clear filters</button>
-            </div>
-          } @else {
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              @for (gym of filteredGyms(); track gym.id) {
-                <app-gym-card [gym]="gym"/>
-              }
-            </div>
-          }
-        }
+        </div>
       </div>
     </section>
   `,
