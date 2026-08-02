@@ -62,13 +62,9 @@ const PRICE_CEILING = 10000;
                 </label>
 
                 <div class="admin-field">
-                  <span>Monthly budget: ₹{{ minPrice() | number }} – ₹{{ maxPrice() | number }}</span>
-                  <div class="price-range">
-                    <input type="range" [min]="floor" [max]="ceiling" step="250" [value]="minPrice()"
-                           (input)="onMinPrice($event)" class="w-full accent-primary">
-                    <input type="range" [min]="floor" [max]="ceiling" step="250" [value]="maxPrice()"
-                           (input)="onMaxPrice($event)" class="w-full accent-primary">
-                  </div>
+                  <span>Max monthly budget: ₹{{ maxPrice() | number }}</span>
+                  <input type="range" [min]="floor" [max]="ceiling" step="250" [value]="maxPrice()"
+                         (input)="onMaxPrice($event)" class="w-full accent-primary">
                 </div>
 
                 <div class="admin-field">
@@ -201,7 +197,6 @@ export class GymListingsComponent implements OnInit {
   search = signal('');
   city = signal('');
   sortBy = signal('featured');
-  minPrice = signal(PRICE_FLOOR);
   maxPrice = signal(PRICE_CEILING);
   minRating = signal(0);
   openNowOnly = signal(false);
@@ -225,7 +220,7 @@ export class GymListingsComponent implements OnInit {
     let n = 0;
     if (this.search().trim()) n++;
     if (this.city()) n++;
-    if (this.minPrice() > PRICE_FLOOR || this.maxPrice() < PRICE_CEILING) n++;
+    if (this.maxPrice() < PRICE_CEILING) n++;
     if (this.minRating() > 0) n++;
     if (this.openNowOnly()) n++;
     if (this.featuredOnly()) n++;
@@ -244,7 +239,7 @@ export class GymListingsComponent implements OnInit {
     }
     if (this.city()) list = list.filter(g => g.city === this.city());
 
-    list = list.filter(g => (g.price ?? 0) >= this.minPrice() && (g.price ?? 0) <= this.maxPrice());
+    list = list.filter(g => (g.price ?? 0) <= this.maxPrice());
 
     if (this.minRating() > 0) list = list.filter(g => (g.rating ?? 0) >= this.minRating());
     if (this.openNowOnly()) list = list.filter(g => g.openNow);
@@ -291,15 +286,8 @@ export class GymListingsComponent implements OnInit {
     this.minRating.set(this.minRating() === r ? 0 : r);
   }
 
-  onMinPrice(e: Event) {
-    const value = +(e.target as HTMLInputElement).value;
-    // Keep the handles from crossing over, which would filter everything out.
-    this.minPrice.set(Math.min(value, this.maxPrice()));
-  }
-
   onMaxPrice(e: Event) {
-    const value = +(e.target as HTMLInputElement).value;
-    this.maxPrice.set(Math.max(value, this.minPrice()));
+    this.maxPrice.set(+(e.target as HTMLInputElement).value);
   }
 
   toggleTag(tag: string) {
@@ -316,7 +304,6 @@ export class GymListingsComponent implements OnInit {
     this.searchQuery = '';
     this.search.set('');
     this.city.set('');
-    this.minPrice.set(PRICE_FLOOR);
     this.maxPrice.set(PRICE_CEILING);
     this.minRating.set(0);
     this.openNowOnly.set(false);
