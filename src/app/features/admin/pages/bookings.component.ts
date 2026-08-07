@@ -1,4 +1,5 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { RoleApiService } from '../../../core/services/role-api.service';
 import { Booking, BookingStatus } from '../../../core/models';
 
@@ -7,6 +8,7 @@ const STATUSES: BookingStatus[] = ['pending', 'contacted', 'converted', 'closed'
 @Component({
   selector: 'app-admin-bookings',
   standalone: true,
+  imports: [FormsModule],
   template: `
     <header class="admin-page-head">
       <h1 class="admin-page-title">Booking Management</h1>
@@ -49,10 +51,12 @@ const STATUSES: BookingStatus[] = ['pending', 'contacted', 'converted', 'closed'
                 <td class="p-4 text-gray-300">{{ b.gymName || '—' }}</td>
                 <td class="p-4 text-gray-300">{{ shortDate(b.createdAt) }}</td>
                 <td class="p-4">
+                  <!-- ngModel rather than [value], for the same reason as the role
+                       select: a plain value binding left every row showing "pending". -->
                   <select class="input-field py-2 text-sm max-w-[10rem]"
                           [disabled]="busy() === b.id"
-                          [value]="b.status"
-                          (change)="setStatus(b, $any($event.target).value)">
+                          [ngModel]="b.status"
+                          (ngModelChange)="setStatus(b, $event)">
                     @for (s of statuses; track s) { <option [value]="s">{{ s }}</option> }
                   </select>
                 </td>

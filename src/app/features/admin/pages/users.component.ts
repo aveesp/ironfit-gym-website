@@ -1,4 +1,5 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { FirebaseAuthService } from '../../../core/services/firebase-auth.service';
 import { RoleApiService } from '../../../core/services/role-api.service';
 import { UserProfile, UserRole } from '../../../core/models';
@@ -6,6 +7,7 @@ import { UserProfile, UserRole } from '../../../core/models';
 @Component({
   selector: 'app-admin-users',
   standalone: true,
+  imports: [FormsModule],
   template: `
     <header class="admin-page-head">
       <h1 class="admin-page-title">User Management</h1>
@@ -48,10 +50,13 @@ import { UserProfile, UserRole } from '../../../core/models';
                     <span [class]="'role-badge role-badge-' + u.role">{{ u.role }}</span>
                     <span class="text-gray-500 text-xs ml-2">(super admin only)</span>
                   } @else {
+                    <!-- ngModel rather than [value]: a plain value binding is applied
+                         before the @if options exist, so the select silently falls
+                         back to its first option and every role displayed as "user". -->
                     <select class="input-field py-2 text-sm max-w-[11rem]"
                             [disabled]="busy() === u.uid"
-                            [value]="u.role"
-                            (change)="onRoleChange(u, $any($event.target).value)">
+                            [ngModel]="u.role"
+                            (ngModelChange)="onRoleChange(u, $event)">
                       <option value="user">user</option>
                       <option value="owner">owner</option>
                       @if (auth.isSuperAdmin()) {
