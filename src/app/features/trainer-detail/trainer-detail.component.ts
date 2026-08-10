@@ -2,7 +2,9 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { firstValueFrom } from 'rxjs';
 import { DataService } from '../../core/services/data.service';
+import { ApiService } from '../../core/services/api.service';
 import { Trainer } from '../../core/models';
 
 @Component({
@@ -152,15 +154,25 @@ import { Trainer } from '../../core/models';
               <div class="card p-6 bg-gradient-to-br from-primary/10 to-dark-700">
                 <h3 class="font-display text-xl font-bold text-white uppercase mb-2">Book a Session</h3>
                 <p class="text-gray-400 text-sm mb-5">Start your transformation with a free 30-min consultation.</p>
-                <form (ngSubmit)="bookConsultation()" class="space-y-3">
-                  <input [(ngModel)]="booking.name" name="bname" placeholder="Your Name" class="input-field text-sm">
-                  <input [(ngModel)]="booking.email" name="bemail" type="email" placeholder="Email" class="input-field text-sm">
+                <form (ngSubmit)="bookConsultation()" #bookForm="ngForm" class="space-y-3">
+                  <input [(ngModel)]="booking.name" name="bname" placeholder="Your Name" class="input-field text-sm" required>
+                  <input [(ngModel)]="booking.email" name="bemail" type="email" placeholder="Email" class="input-field text-sm" required email>
                   <input [(ngModel)]="booking.phone" name="bphone" placeholder="Phone" class="input-field text-sm">
-                  <button type="submit" class="btn-primary w-full justify-center">Book Consultation</button>
+                  <textarea [(ngModel)]="booking.message" name="bmessage" rows="3" required
+                            placeholder="What are your goals?" class="input-field text-sm resize-none"></textarea>
+                  <button type="submit" [disabled]="sending() || bookForm.invalid"
+                          class="btn-primary w-full justify-center disabled:opacity-50 disabled:cursor-not-allowed">
+                    {{ sending() ? 'Sending…' : 'Book Consultation' }}
+                  </button>
                 </form>
                 @if (bookingSent()) {
                   <div class="mt-4 bg-green-500/10 border border-green-500/30 rounded-xl p-3 text-green-400 text-sm text-center">
-                    ✓ Booked! {{trainer.name}} will contact you soon.
+                    ✓ Request sent! {{trainer.name}} will contact you soon.
+                  </div>
+                }
+                @if (bookingError()) {
+                  <div class="mt-4 bg-red-500/10 border border-red-500/30 rounded-xl p-3 text-red-400 text-sm text-center">
+                    {{ bookingError() }}
                   </div>
                 }
               </div>
@@ -180,11 +192,14 @@ import { Trainer } from '../../core/models';
 })
 export class TrainerDetailComponent implements OnInit {
   private data = inject(DataService);
+  private api = inject(ApiService);
   private route = inject(ActivatedRoute);
 
   trainer: Trainer | undefined;
   bookingSent = signal(false);
-  booking = { name: '', email: '', phone: '' };
+  bookingError = signal('');
+  sending = signal(false);
+  booking = { name: '', email: '', phone: '', message: '' };
 
   ngOnInit() {
     const slug = this.route.snapshot.paramMap.get('slug') || '';
@@ -201,9 +216,26 @@ export class TrainerDetailComponent implements OnInit {
     ];
   }
 
-  bookConsultation() {
-    this.bookingSent.set(true);
-    this.booking = { name: '', email: '', phone: '' };
-    setTimeout(() => this.bookingSent.set(false), 5000);
+  async bookConsultation() {
+    this.sending.set(true);
+    this.bookingError.set('');
+    try {
+      await firstValueFrom(this.api.submitInquiry({
+        name: this.booking.name.trim(),
+        email: this.booking.email.trim(),
+        phone: this.booking.phone.trim(),
+        interest: 'Trainer consultation',
+        message: this.booking.message.trim(),
+        trainerId: this.trainer?.id,
+        trainerName: this.trainer?.name,
+      }));
+      this.bookingSent.set(true);
+      this.booking = { name: '', email: '', phone: '', message: '' };
+      setTimeout(() => this.bookingSent.set(false), 6000);
+    } catch (e: any) {
+      this.bookingError.set(e?.error?.error ?? 'Could not send your request. Please try again.');
+    } finally {
+      this.sending.set(false);
+    }
   }
 }

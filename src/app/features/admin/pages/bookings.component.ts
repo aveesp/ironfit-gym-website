@@ -1,9 +1,17 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RoleApiService } from '../../../core/services/role-api.service';
-import { Booking, BookingStatus } from '../../../core/models';
+import { Booking, BookingStatus, InquiryType } from '../../../core/models';
 
 const STATUSES: BookingStatus[] = ['pending', 'contacted', 'converted', 'closed'];
+
+const TYPE_TABS: { id: InquiryType | 'all'; label: string; icon: string }[] = [
+  { id: 'all',          label: 'All',          icon: '📥' },
+  { id: 'gym',          label: 'Gym',          icon: '🏋️' },
+  { id: 'trainer',      label: 'Trainer',      icon: '💪' },
+  { id: 'nutritionist', label: 'Nutrition',    icon: '🥗' },
+  { id: 'general',      label: 'General',      icon: '✉️' },
+];
 
 @Component({
   selector: 'app-admin-bookings',
@@ -13,13 +21,23 @@ const STATUSES: BookingStatus[] = ['pending', 'contacted', 'converted', 'closed'
     <header class="admin-page-head">
       <h1 class="admin-page-title">Booking Management</h1>
       <p class="admin-page-sub">
-        Gym enquiries submitted through the site. {{ bookings().length }} total,
-        <span class="text-primary">{{ pendingCount() }} pending</span>.
+        Enquiries from gyms, trainers, nutritionists and the contact page.
+        {{ bookings().length }} total, <span class="text-primary">{{ pendingCount() }} pending</span>.
       </p>
     </header>
 
     @if (error()) { <div class="admin-error">{{ error() }}</div> }
     @if (notice()) { <div class="admin-notice">{{ notice() }}</div> }
+
+    <div class="admin-tabs">
+      @for (t of typeTabs; track t.id) {
+        <button (click)="activeType.set(t.id)"
+                [class]="activeType() === t.id ? 'admin-tab admin-tab-active' : 'admin-tab'">
+          <span>{{ t.icon }}</span> {{ t.label }}
+          <span class="filter-count">{{ countOf(t.id) }}</span>
+        </button>
+      }
+    </div>
 
     @if (loading()) {
       <p class="text-gray-400">Loading bookings...</p>
@@ -28,28 +46,44 @@ const STATUSES: BookingStatus[] = ['pending', 'contacted', 'converted', 'closed'
         <div class="text-4xl mb-3">📭</div>
         <p class="text-gray-400">No enquiries have been submitted yet.</p>
       </div>
+    } @else if (filtered().length === 0) {
+      <div class="card p-10 text-center">
+        <div class="text-4xl mb-3">🔍</div>
+        <p class="text-gray-400">No enquiries of this type.</p>
+      </div>
     } @else {
       <div class="card overflow-x-auto">
         <table class="w-full text-sm">
           <thead>
             <tr class="border-b border-dark-500">
               <th class="text-left p-4 text-gray-400 font-medium">Enquirer</th>
-              <th class="text-left p-4 text-gray-400 font-medium">Gym</th>
+              <th class="text-left p-4 text-gray-400 font-medium">Type</th>
+              <th class="text-left p-4 text-gray-400 font-medium">About</th>
+              <th class="text-left p-4 text-gray-400 font-medium">Message</th>
               <th class="text-left p-4 text-gray-400 font-medium">Received</th>
               <th class="text-left p-4 text-gray-400 font-medium">Status</th>
               <th class="text-right p-4 text-gray-400 font-medium">Actions</th>
             </tr>
           </thead>
           <tbody>
-            @for (b of bookings(); track b.id) {
+            @for (b of filtered(); track b.id) {
               <tr class="border-b border-dark-600">
                 <td class="p-4">
                   <div class="text-white font-medium">{{ b.name }}</div>
                   <div class="text-gray-500 text-xs break-all">{{ b.email }}</div>
                   @if (b.phone) { <div class="text-gray-500 text-xs">{{ b.phone }}</div> }
                 </td>
-                <td class="p-4 text-gray-300">{{ b.gymName || '—' }}</td>
-                <td class="p-4 text-gray-300">{{ shortDate(b.createdAt) }}</td>
+                <td class="p-4">
+                  <span [class]="'enquiry-type enquiry-type-' + b.type">{{ typeLabel(b.type) }}</span>
+                </td>
+                <td class="p-4 text-gray-300">
+                  {{ b.subjectName || '—' }}
+                  @if (b.interest) { <div class="text-gray-500 text-xs mt-0.5">{{ b.interest }}</div> }
+                </td>
+                <td class="p-4 text-gray-300 max-w-xs">
+                  <div class="line-clamp-2">{{ b.message }}</div>
+                </td>
+                <td class="p-4 text-gray-300 whitespace-nowrap">{{ shortDate(b.createdAt) }}</td>
                 <td class="p-4">
                   <!-- ngModel rather than [value], for the same reason as the role
                        select: a plain value binding left every row showing "pending". -->
@@ -76,8 +110,16 @@ export class AdminBookingsComponent implements OnInit {
   private api = inject(RoleApiService);
 
   statuses = STATUSES;
+  typeTabs = TYPE_TABS;
+
   bookings = signal<Booking[]>([]);
+  activeType = signal<InquiryType | 'all'>('all');
   pendingCount = computed(() => this.bookings().filter(b => b.status === 'pending').length);
+
+  filtered = computed(() => {
+    const t = this.activeType();
+    return t === 'all' ? this.bookings() : this.bookings().filter(b => b.type === t);
+  });
 
   loading = signal(true);
   error = signal('');
@@ -86,6 +128,14 @@ export class AdminBookingsComponent implements OnInit {
 
   async ngOnInit() {
     await this.reload();
+  }
+
+  countOf(id: InquiryType | 'all') {
+    return id === 'all' ? this.bookings().length : this.bookings().filter(b => b.type === id).length;
+  }
+
+  typeLabel(type: InquiryType) {
+    return TYPE_TABS.find(t => t.id === type)?.label ?? type;
   }
 
   shortDate(iso: string) {

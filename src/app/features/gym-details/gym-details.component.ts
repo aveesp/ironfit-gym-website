@@ -2,7 +2,9 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { firstValueFrom } from 'rxjs';
 import { DataService } from '../../core/services/data.service';
+import { ApiService } from '../../core/services/api.service';
 import { Gym } from '../../core/models';
 
 @Component({
@@ -177,9 +179,9 @@ import { Gym } from '../../core/models';
               <!-- Inquiry Form -->
               <div class="card p-6">
                 <h3 class="font-display text-xl font-bold text-white uppercase mb-5">Send Inquiry</h3>
-                <form (ngSubmit)="submitInquiry()" class="space-y-4">
+                <form (ngSubmit)="submitInquiry()" #inqForm="ngForm" class="space-y-4">
                   <input [(ngModel)]="inquiry.name" name="name" placeholder="Your Name" class="input-field text-sm" required>
-                  <input [(ngModel)]="inquiry.email" name="email" type="email" placeholder="Email Address" class="input-field text-sm" required>
+                  <input [(ngModel)]="inquiry.email" name="email" type="email" placeholder="Email Address" class="input-field text-sm" required email>
                   <input [(ngModel)]="inquiry.phone" name="phone" placeholder="Phone Number" class="input-field text-sm">
                   <select [(ngModel)]="inquiry.interest" name="interest" class="input-field text-sm">
                     <option value="">I'm interested in...</option>
@@ -188,12 +190,21 @@ import { Gym } from '../../core/models';
                     <option>Free Trial</option>
                     <option>Group Classes</option>
                   </select>
-                  <textarea [(ngModel)]="inquiry.message" name="message" rows="3" placeholder="Your message..." class="input-field text-sm resize-none"></textarea>
-                  <button type="submit" class="btn-primary w-full justify-center">Send Inquiry</button>
+                  <textarea [(ngModel)]="inquiry.message" name="message" rows="3" required
+                            placeholder="Your message..." class="input-field text-sm resize-none"></textarea>
+                  <button type="submit" [disabled]="sending() || inqForm.invalid"
+                          class="btn-primary w-full justify-center disabled:opacity-50 disabled:cursor-not-allowed">
+                    {{ sending() ? 'Sending…' : 'Send Inquiry' }}
+                  </button>
                 </form>
                 @if (inquirySent()) {
                   <div class="mt-4 bg-green-500/10 border border-green-500/30 rounded-xl p-4 text-green-400 text-sm text-center">
                     ✓ Inquiry sent! We'll get back to you within 24 hours.
+                  </div>
+                }
+                @if (inquiryError()) {
+                  <div class="mt-4 bg-red-500/10 border border-red-500/30 rounded-xl p-4 text-red-400 text-sm text-center">
+                    {{ inquiryError() }}
                   </div>
                 }
               </div>
@@ -213,11 +224,14 @@ import { Gym } from '../../core/models';
 })
 export class GymDetailsComponent implements OnInit {
   private data = inject(DataService);
+  private api = inject(ApiService);
   private route = inject(ActivatedRoute);
 
   gym: Gym | undefined;
   activeImage = signal(0);
   inquirySent = signal(false);
+  inquiryError = signal('');
+  sending = signal(false);
   allPlans = this.data.getPlans();
 
   inquiry = { name: '', email: '', phone: '', interest: '', message: '' };
@@ -227,9 +241,28 @@ export class GymDetailsComponent implements OnInit {
     this.gym = this.data.getGymBySlug(slug);
   }
 
-  submitInquiry() {
-    this.inquirySent.set(true);
-    this.inquiry = { name: '', email: '', phone: '', interest: '', message: '' };
-    setTimeout(() => this.inquirySent.set(false), 5000);
+  async submitInquiry() {
+    this.sending.set(true);
+    this.inquiryError.set('');
+    try {
+      await firstValueFrom(this.api.submitInquiry({
+        name: this.inquiry.name.trim(),
+        email: this.inquiry.email.trim(),
+        phone: this.inquiry.phone.trim(),
+        interest: this.inquiry.interest,
+        message: this.inquiry.message.trim(),
+        // Attaching the gym is what files this under the right listing
+        // in Booking Management.
+        gymId: this.gym?.id,
+        gymName: this.gym?.name,
+      }));
+      this.inquirySent.set(true);
+      this.inquiry = { name: '', email: '', phone: '', interest: '', message: '' };
+      setTimeout(() => this.inquirySent.set(false), 6000);
+    } catch (e: any) {
+      this.inquiryError.set(e?.error?.error ?? 'Could not send your enquiry. Please try again.');
+    } finally {
+      this.sending.set(false);
+    }
   }
 }

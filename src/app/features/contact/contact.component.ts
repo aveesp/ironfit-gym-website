@@ -1,6 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { firstValueFrom } from 'rxjs';
+import { ApiService } from '../../core/services/api.service';
 
 @Component({
   selector: 'app-contact',
@@ -112,12 +114,19 @@ import { CommonModule } from '@angular/common';
                     <input type="checkbox" name="privacy" ngModel required id="privacy" class="w-4 h-4 accent-primary mt-1">
                     <label for="privacy" class="text-gray-400 text-sm">I agree to the <span class="text-primary">Privacy Policy</span> and consent to being contacted.</label>
                   </div>
-                  <button type="submit" [disabled]="contactForm.invalid"
+                  @if (error()) {
+                    <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-4 text-red-400 text-sm">
+                      {{ error() }}
+                    </div>
+                  }
+                  <button type="submit" [disabled]="contactForm.invalid || sending()"
                           class="btn-primary w-full justify-center text-base py-4 disabled:opacity-50 disabled:cursor-not-allowed">
-                    Send Message
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                    </svg>
+                    {{ sending() ? 'Sending…' : 'Send Message' }}
+                    @if (!sending()) {
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                      </svg>
+                    }
                   </button>
                 </form>
               } @else {
@@ -140,7 +149,11 @@ import { CommonModule } from '@angular/common';
   `,
 })
 export class ContactComponent {
+  private api = inject(ApiService);
+
   sent = signal(false);
+  sending = signal(false);
+  error = signal('');
 
   contactInfo = [
     { icon: '📍', title: 'Visit Us', value: '123 Fitness Ave, Manhattan<br>New York, NY 10001' },
@@ -156,9 +169,28 @@ export class ContactComponent {
     { name: 'YouTube', abbr: 'YT', color: '#FF0000' },
   ];
 
-  submit(form: NgForm) {
-    if (form.valid) {
+  async submit(form: NgForm) {
+    if (form.invalid) return;
+
+    this.sending.set(true);
+    this.error.set('');
+    const v = form.value;
+    try {
+      await firstValueFrom(this.api.submitInquiry({
+        // The form collects first and last name separately; the API takes one.
+        name: `${(v.firstName ?? '').trim()} ${(v.lastName ?? '').trim()}`.trim(),
+        email: (v.email ?? '').trim(),
+        phone: (v.phone ?? '').trim(),
+        interest: v.subject ?? '',
+        message: (v.message ?? '').trim(),
+        // No subject attached, so the API files this as a general enquiry.
+      }));
       this.sent.set(true);
+      form.resetForm();
+    } catch (e: any) {
+      this.error.set(e?.error?.error ?? 'Could not send your message. Please try again.');
+    } finally {
+      this.sending.set(false);
     }
   }
 }

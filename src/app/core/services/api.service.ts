@@ -3,7 +3,9 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, from, switchMap, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { FirebaseAuthService } from './firebase-auth.service';
-import { Gym, Trainer, MembershipPlan, BlogPost, Nutritionist } from '../models';
+import {
+  Gym, Trainer, MembershipPlan, BlogPost, Nutritionist, InquiryPayload, InquiryType,
+} from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
@@ -70,12 +72,9 @@ export class ApiService {
   }
 
   // ── Inquiries ─────────────────────────────────────────────
-  submitInquiry(data: {
-    name: string; email: string; phone?: string; interest?: string; message: string;
-    gymId?: string; gymName?: string;
-    nutritionistId?: string; nutritionistName?: string;
-  }): Observable<{ id: string }> {
-    return this.http.post<{ id: string }>(`${this.base}/inquiries`, data);
+  /** Public. `type` is derived server-side from whichever subject is attached. */
+  submitInquiry(data: InquiryPayload): Observable<{ id: string; type: InquiryType }> {
+    return this.http.post<{ id: string; type: InquiryType }>(`${this.base}/inquiries`, data);
   }
 
   // ── Auth header helper ────────────────────────────────────

@@ -100,6 +100,9 @@ export type UserStatus = 'active' | 'pending' | 'rejected';
 /** Lifecycle of a booking enquiry as it is worked by staff. */
 export type BookingStatus = 'pending' | 'contacted' | 'converted' | 'closed';
 
+/** What an enquiry is about. Derived server-side from the attached subject. */
+export type InquiryType = 'gym' | 'trainer' | 'nutritionist' | 'general';
+
 export interface Booking {
   id: string;
   name: string;
@@ -107,10 +110,32 @@ export interface Booking {
   phone: string;
   interest: string;
   message: string;
+  type: InquiryType;
+  /** Denormalised gym/trainer/nutritionist name, so the list needs no lookup. */
+  subjectName: string | null;
   gymId: string | null;
   gymName: string | null;
+  trainerId: string | null;
+  trainerName: string | null;
+  nutritionistId: string | null;
+  nutritionistName: string | null;
   status: BookingStatus;
   createdAt: string;
+}
+
+/** Payload for the public enquiry endpoint. Attach at most one subject. */
+export interface InquiryPayload {
+  name: string;
+  email: string;
+  phone?: string;
+  interest?: string;
+  message: string;
+  gymId?: string;
+  gymName?: string;
+  trainerId?: string;
+  trainerName?: string;
+  nutritionistId?: string;
+  nutritionistName?: string;
 }
 
 // ── Nutritionists ──
