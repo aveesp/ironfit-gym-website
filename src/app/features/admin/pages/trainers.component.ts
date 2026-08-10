@@ -5,6 +5,7 @@ import { Gym, Trainer } from '../../../core/models';
 
 const emptyForm = () => ({
   name: '', slug: '', title: '', photo: '', bio: '',
+  email: '', phone: '',
   specializations: '', certifications: '', timings: '',
   experience: 0,
   freelance: true,
@@ -64,6 +65,18 @@ const emptyForm = () => ({
           <label class="admin-field">
             <span>Photo URL</span>
             <input name="photo" [(ngModel)]="form.photo" placeholder="https://…" class="input-field">
+          </label>
+
+          <label class="admin-field">
+            <span>Contact email</span>
+            <input type="email" name="email" [(ngModel)]="form.email"
+                   placeholder="kabir@example.com" class="input-field">
+            <small>Booking requests are emailed here</small>
+          </label>
+
+          <label class="admin-field">
+            <span>Phone</span>
+            <input name="phone" [(ngModel)]="form.phone" placeholder="+91 90000 12345" class="input-field">
           </label>
 
           <label class="admin-field admin-field-wide">
@@ -282,6 +295,8 @@ export class AdminTrainersComponent implements OnInit {
         title: f.title.trim(),
         photo: f.photo.trim(),
         bio: f.bio.trim(),
+        email: f.email.trim(),
+        phone: f.phone.trim(),
         specializations: f.specializations,
         certifications: f.certifications,
         timings: f.timings,

@@ -83,7 +83,12 @@ const TYPE_TABS: { id: InquiryType | 'all'; label: string; icon: string }[] = [
                 <td class="p-4 text-gray-300 max-w-xs">
                   <div class="line-clamp-2">{{ b.message }}</div>
                 </td>
-                <td class="p-4 text-gray-300 whitespace-nowrap">{{ shortDate(b.createdAt) }}</td>
+                <td class="p-4 text-gray-300 whitespace-nowrap">
+                  {{ shortDate(b.createdAt) }}
+                  <div [class]="'notify-pill notify-' + notifyState(b)" [title]="notifyTitle(b)">
+                    {{ notifyLabel(b) }}
+                  </div>
+                </td>
                 <td class="p-4">
                   <!-- ngModel rather than [value], for the same reason as the role
                        select: a plain value binding left every row showing "pending". -->
@@ -136,6 +141,34 @@ export class AdminBookingsComponent implements OnInit {
 
   typeLabel(type: InquiryType) {
     return TYPE_TABS.find(t => t.id === type)?.label ?? type;
+  }
+
+  /**
+   * Whether the enquiry actually reached the provider. Worth surfacing: an
+   * enquiry that was stored but never forwarded looks identical otherwise,
+   * and would sit unanswered.
+   */
+  notifyState(b: Booking): 'sent' | 'pending' | 'none' | 'failed' {
+    switch (b.notifyStatus) {
+      case 'sent': return 'sent';
+      case 'no-provider-email': return 'none';
+      case 'failed': return 'failed';
+      case 'mail-not-configured': return 'pending';
+      default: return 'pending';
+    }
+  }
+
+  notifyLabel(b: Booking) {
+    return { sent: '✓ emailed', pending: '• not sent', none: '⚠ no email', failed: '✕ failed' }[this.notifyState(b)];
+  }
+
+  notifyTitle(b: Booking) {
+    return {
+      sent: `Forwarded to ${b.providerEmail}`,
+      pending: 'Email is not configured on the server',
+      none: 'This provider has no contact email on file',
+      failed: 'Sending failed — check the server logs',
+    }[this.notifyState(b)];
   }
 
   shortDate(iso: string) {

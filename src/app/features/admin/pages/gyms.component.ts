@@ -8,7 +8,7 @@ const emptyForm = () => ({
   name: '', slug: '', description: '',
   city: '', location: '', address: '',
   price: null as number | null,
-  phone: '', whatsapp: '', image: '',
+  email: '', phone: '', whatsapp: '', image: '',
   amenities: '', facilities: '', tags: '',
   featured: false, openNow: true,
 });
@@ -77,6 +77,13 @@ const emptyForm = () => ({
             <span>Price per month (₹)</span>
             <input type="number" name="price" [(ngModel)]="form.price" min="0"
                    placeholder="3999" class="input-field">
+          </label>
+
+          <label class="admin-field">
+            <span>Contact email</span>
+            <input type="email" name="email" [(ngModel)]="form.email"
+                   placeholder="owner@irongym.com" class="input-field">
+            <small>Enquiries for this gym are emailed here</small>
           </label>
 
           <label class="admin-field">
@@ -235,6 +242,7 @@ export class AdminGymsComponent implements OnInit {
         location: f.location.trim(),
         address: f.address.trim(),
         price: Number(f.price) || 0,
+        email: f.email.trim(),
         phone: f.phone.trim(),
         whatsapp: f.whatsapp.trim(),
         images: f.image.trim() ? [f.image.trim()] : [],

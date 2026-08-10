@@ -17,6 +17,8 @@ export interface Gym {
   hours: { day: string; open: string; close: string }[];
   phone: string;
   whatsapp: string;
+  /** Where enquiries for this gym are forwarded. */
+  email?: string;
   website?: string;
   trainers: Trainer[];
   plans: MembershipPlan[];
@@ -50,6 +52,9 @@ export interface Trainer {
   monthlyRate?: number;
   /** Gyms a freelance trainer is available at. */
   gyms?: { id: string | null; name: string }[];
+  /** Where booking requests for this trainer are forwarded. */
+  email?: string;
+  phone?: string;
   /** Undefined on seeded trainers — only an explicit false hides a profile. */
   active?: boolean;
 }
@@ -121,6 +126,11 @@ export interface Booking {
   nutritionistName: string | null;
   status: BookingStatus;
   createdAt: string;
+  /** Whether the enquiry was forwarded to the provider by email. */
+  notifyStatus?: 'sent' | 'failed' | 'no-provider-email' | 'mail-not-configured';
+  providerEmail?: string | null;
+  notified?: boolean;
+  confirmationSent?: boolean;
 }
 
 /** Payload for the public enquiry endpoint. Attach at most one subject. */
