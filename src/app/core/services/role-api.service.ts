@@ -3,7 +3,7 @@ import { environment } from '../../../environments/environment';
 import { FirebaseAuthService } from './firebase-auth.service';
 import {
   AdminStats, Booking, BookingStatus, BlogPost, CmsContent, CmsSectionName,
-  Gym, Nutritionist, Offer, Trainer, UserProfile, UserRole,
+  BulkGymResult, Gym, Nutritionist, Offer, Trainer, UserProfile, UserRole,
 } from '../models';
 
 /**
@@ -78,6 +78,17 @@ export class RoleApiService {
     return this.request<Gym>('/gyms', {
       method: 'POST',
       body: JSON.stringify(gym),
+    });
+  }
+
+  /**
+   * Imports many gyms at once. With dryRun the server validates and reports
+   * per-row outcomes without writing, which is what the preview step uses.
+   */
+  bulkCreateGyms(gyms: Record<string, unknown>[], dryRun = false) {
+    return this.request<BulkGymResult>('/gyms/bulk', {
+      method: 'POST',
+      body: JSON.stringify({ gyms, dryRun }),
     });
   }
 
