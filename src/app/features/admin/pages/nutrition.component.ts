@@ -1,7 +1,8 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RoleApiService } from '../../../core/services/role-api.service';
-import { Nutritionist } from '../../../core/models';
+import { BulkImportResult, Nutritionist } from '../../../core/models';
+import { BulkUploadComponent, BulkUploadConfig } from '../../../shared/components/bulk-upload/bulk-upload.component';
 
 const emptyForm = () => ({
   name: '', slug: '', title: '', photo: '', bio: '',
@@ -11,10 +12,61 @@ const emptyForm = () => ({
   online: true, inPerson: false,
 });
 
+
+/** Spreadsheet cells are all strings — turn them into the shapes the API wants. */
+function splitList(value: string): string[] {
+  // Pipes let a cell contain commas without needing quotes in the sheet.
+  return String(value ?? '').split(/[|,]/).map(v => v.trim()).filter(Boolean);
+}
+
+function toBool(value: string, fallback: boolean): boolean {
+  const v = String(value ?? '').trim().toLowerCase();
+  if (!v) return fallback;
+  return ['true', 'yes', 'y', '1'].includes(v);
+}
+
+function toNutritionistPayload(row: Record<string, string>): Record<string, unknown> {
+  const payload: Record<string, unknown> = {
+    name: row['name'] ?? '',
+    slug: (row['slug'] ?? '').toLowerCase(),
+    title: row['title'] ?? '',
+    photo: row['photo'] ?? '',
+    bio: row['bio'] ?? '',
+    email: row['email'] ?? '',
+    phone: row['phone'] ?? '',
+    specializations: splitList(row['specializations']),
+    certifications: splitList(row['certifications']),
+    languages: splitList(row['languages']),
+    // Defaults to Online so a blank column still yields a bookable profile.
+    consultationModes: splitList(row['consultationModes']).length
+      ? splitList(row['consultationModes'])
+      : ['Online'],
+  };
+  if (String(row['experience'] ?? '').trim()) payload['experience'] = Number(row['experience']);
+  if (String(row['consultationFee'] ?? '').trim()) payload['consultationFee'] = Number(row['consultationFee']);
+  return payload;
+}
+
+const HEADER_ALIASES: Record<string, string> = {
+  nutritionistname: 'name', fullname: 'name',
+  url: 'slug', handle: 'slug',
+  role: 'title', designation: 'title',
+  contactemail: 'email', emailaddress: 'email',
+  contactphone: 'phone', phonenumber: 'phone', mobile: 'phone',
+  about: 'bio', description: 'bio',
+  years: 'experience', yearsofexperience: 'experience',
+  fee: 'consultationFee', consultationfee: 'consultationFee', price: 'consultationFee',
+  modes: 'consultationModes', consultationmodes: 'consultationModes', mode: 'consultationModes',
+  specialisations: 'specializations', skills: 'specializations',
+  certs: 'certifications',
+  languagesspoken: 'languages', speaks: 'languages',
+  photourl: 'photo', imageurl: 'photo',
+};
+
 @Component({
   selector: 'app-admin-nutrition',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, BulkUploadComponent],
   template: `
     <header class="admin-page-head">
       <div class="flex flex-wrap items-start justify-between gap-4">
@@ -22,14 +74,25 @@ const emptyForm = () => ({
           <h1 class="admin-page-title">Nutrition Management</h1>
           <p class="admin-page-sub">Onboard nutritionists so members can find and connect with them.</p>
         </div>
-        <button (click)="toggleForm()" class="btn-primary text-sm">
-          {{ showForm() ? 'Cancel' : '+ Onboard Nutritionist' }}
-        </button>
+        <div class="flex flex-wrap gap-3">
+          <button (click)="toggleUpload()" class="btn-secondary text-sm">
+            {{ showUpload() ? 'Cancel' : '⬆ Bulk Upload' }}
+          </button>
+          <button (click)="toggleForm()" class="btn-primary text-sm">
+            {{ showForm() ? 'Cancel' : '+ Onboard Nutritionist' }}
+          </button>
+        </div>
       </div>
     </header>
 
     @if (error()) { <div class="admin-error">{{ error() }}</div> }
     @if (notice()) { <div class="admin-notice">{{ notice() }}</div> }
+
+    @if (showUpload()) {
+      <app-bulk-upload [config]="uploadConfig"
+                       (completed)="onImported($event)"
+                       (failed)="error.set($event)" />
+    }
 
     <div class="admin-stat-grid mb-8">
       <div class="card p-5"><div class="admin-stat-value">{{ people().length }}</div><div class="admin-stat-label">Nutritionists</div></div>
@@ -192,6 +255,32 @@ export class AdminNutritionComponent implements OnInit {
   busy = signal<string | null>(null);
 
   showForm = signal(false);
+  showUpload = signal(false);
+
+  /** Everything the shared upload panel needs to import nutritionists. */
+  uploadConfig: BulkUploadConfig = {
+    label: 'nutritionists',
+    singular: 'nutritionist',
+    templateFile: 'ironfit-nutritionist-import-template.csv',
+    templateHeaders: ['name','slug','title','email','phone','bio','experience','consultationFee','consultationModes','specializations','certifications','languages'],
+    templateSample: ['Dr. Anita Rao','anita-rao','Sports Nutritionist','anita@example.com','+91 90000 12345','Helps athletes fuel properly.','8','1200','Online | In-person','Weight Loss | PCOS','RD | MSc Nutrition','English | Hindi'],
+    headerAliases: HEADER_ALIASES,
+    mapRow: toNutritionistPayload,
+    submit: (rows, dryRun) => this.api.bulkCreateNutritionists(rows, dryRun),
+  };
+
+  toggleUpload() {
+    this.showUpload.update(v => !v);
+  }
+
+  async onImported(result: BulkImportResult) {
+    const skipped = result.duplicates + result.invalid;
+    this.notice.set(
+      `Imported ${result.created} nutritionist${result.created === 1 ? '' : 's'}` +
+      (skipped > 0 ? ` — ${skipped} row(s) skipped.` : '.'),
+    );
+    await this.reload();
+  }
   saving = signal(false);
   form = emptyForm();
   slugTouched = false;

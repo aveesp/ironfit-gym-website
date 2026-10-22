@@ -1,8 +1,8 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RoleApiService } from '../../../core/services/role-api.service';
-import { BulkGymResult, BulkRowStatus, Gym } from '../../../core/models';
-import { parseCsvToObjects, toCsv, downloadCsv } from '../../../core/utils/csv';
+import { BulkImportResult, Gym } from '../../../core/models';
+import { BulkUploadComponent, BulkUploadConfig } from '../../../shared/components/bulk-upload/bulk-upload.component';
 
 /** Blank form state, also used to reset after a successful save. */
 const emptyForm = () => ({
@@ -13,9 +13,6 @@ const emptyForm = () => ({
   amenities: '', facilities: '', tags: '',
   featured: false, openNow: true,
 });
-
-/** Mirrors the server's cap so the UI can warn before an upload is rejected. */
-const BULK_LIMIT = 200;
 
 /**
  * Spreadsheet headers people actually type, mapped to the field names the API
@@ -81,7 +78,7 @@ function toGymPayload(row: Record<string, string>): Record<string, unknown> {
 @Component({
   selector: 'app-admin-gyms',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, BulkUploadComponent],
   template: `
     <header class="admin-page-head">
       <div class="flex flex-wrap items-start justify-between gap-4">
@@ -104,83 +101,9 @@ function toGymPayload(row: Record<string, string>): Record<string, unknown> {
     @if (notice()) { <div class="admin-notice">{{ notice() }}</div> }
 
     @if (showUpload()) {
-      <div class="card p-6 mb-8">
-        <div class="flex flex-wrap items-start justify-between gap-4 mb-5">
-          <div>
-            <h2 class="font-display text-lg font-bold text-white uppercase">Bulk upload gyms</h2>
-            <p class="admin-page-sub">Upload a CSV to add many gyms at once. Up to {{ bulkLimit }} rows.</p>
-          </div>
-          <button type="button" (click)="downloadTemplate()" class="btn-secondary text-sm">
-            ⬇ Download template
-          </button>
-        </div>
-
-        <label class="csv-drop">
-          <input type="file" accept=".csv,text/csv" (change)="onFileSelected($event)" hidden>
-          <span class="text-3xl">📄</span>
-          <span class="csv-drop-title">{{ fileName() || 'Choose a CSV file' }}</span>
-          <span class="csv-drop-hint">
-            Required columns: <code>name</code> and <code>slug</code>. Everything else is optional.
-          </span>
-        </label>
-
-        @if (parseError()) {
-          <div class="admin-error mt-4">{{ parseError() }}</div>
-        }
-
-        @if (preview(); as p) {
-          <div class="bulk-summary">
-            <div class="bulk-stat"><span class="bulk-stat-value">{{ p.total }}</span><span>rows</span></div>
-            <div class="bulk-stat bulk-stat-ok"><span class="bulk-stat-value">{{ p.valid ?? p.created }}</span><span>ready</span></div>
-            <div class="bulk-stat bulk-stat-warn"><span class="bulk-stat-value">{{ p.duplicates }}</span><span>duplicates</span></div>
-            <div class="bulk-stat bulk-stat-bad"><span class="bulk-stat-value">{{ p.invalid }}</span><span>invalid</span></div>
-          </div>
-
-          @if (p.invalid > 0 || p.duplicates > 0) {
-            <p class="text-gray-400 text-sm mb-3">
-              Rows with a problem are skipped — the rest still import.
-            </p>
-          }
-
-          <div class="card overflow-x-auto mb-5">
-            <table class="w-full text-sm">
-              <thead>
-                <tr class="border-b border-dark-500">
-                  <th class="text-left p-3 text-gray-400 font-medium">Row</th>
-                  <th class="text-left p-3 text-gray-400 font-medium">Name</th>
-                  <th class="text-left p-3 text-gray-400 font-medium">Slug</th>
-                  <th class="text-left p-3 text-gray-400 font-medium">Status</th>
-                  <th class="text-left p-3 text-gray-400 font-medium">Detail</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (r of p.results; track r.row) {
-                  <tr class="border-b border-dark-600">
-                    <td class="p-3 text-gray-500">{{ r.row }}</td>
-                    <td class="p-3 text-white">{{ r.name || '—' }}</td>
-                    <td class="p-3 text-gray-300">{{ r.slug || '—' }}</td>
-                    <td class="p-3"><span [class]="'status-pill ' + statusClass(r.status)">{{ r.status }}</span></td>
-                    <td class="p-3 text-gray-400">{{ r.error || '' }}</td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </div>
-
-          <div class="admin-actions">
-            @if (!imported()) {
-              <button type="button" (click)="runImport()"
-                      [disabled]="importing() || (p.valid ?? 0) === 0"
-                      class="btn-primary disabled:opacity-50 disabled:cursor-not-allowed">
-                {{ importing() ? 'Importing…' : 'Import ' + (p.valid ?? 0) + ' gym' + ((p.valid ?? 0) === 1 ? '' : 's') }}
-              </button>
-            }
-            <button type="button" (click)="resetUpload()" class="btn-secondary">
-              {{ imported() ? 'Upload another' : 'Clear' }}
-            </button>
-          </div>
-        }
-      </div>
+      <app-bulk-upload [config]="uploadConfig"
+                       (completed)="onImported($event)"
+                       (failed)="error.set($event)" />
     }
 
     @if (showForm()) {
@@ -350,15 +273,30 @@ export class AdminGymsComponent implements OnInit {
   slugTouched = false;
 
   // ── Bulk upload ──
-  bulkLimit = BULK_LIMIT;
   showUpload = signal(false);
-  fileName = signal('');
-  parseError = signal('');
-  preview = signal<BulkGymResult | null>(null);
-  importing = signal(false);
-  imported = signal(false);
-  /** Parsed rows held back until the admin confirms the previewed import. */
-  private pendingRows: Record<string, unknown>[] = [];
+
+  /** Everything the shared upload panel needs to import gyms. */
+  uploadConfig: BulkUploadConfig = {
+    label: 'gyms',
+    singular: 'gym',
+    templateFile: 'ironfit-gym-import-template.csv',
+    templateHeaders: [
+      'name', 'slug', 'description', 'city', 'location', 'address',
+      'price', 'email', 'phone', 'whatsapp', 'image',
+      'amenities', 'facilities', 'tags', 'featured', 'openNow',
+    ],
+    templateSample: [
+      'Iron Beast Gym', 'iron-beast-gym', 'Premium facility with expert trainers.',
+      'Pune', 'Baner', '123 Fitness Ave, Baner, Pune 411045',
+      '3999', 'owner@ironbeast.com', '+91 98765 43210', '+919876543210',
+      'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800',
+      'Locker Rooms | Showers | Parking', 'Cardio Zone | Free Weights', 'CrossFit | Yoga',
+      'true', 'true',
+    ],
+    headerAliases: HEADER_ALIASES,
+    mapRow: toGymPayload,
+    submit: (rows, dryRun) => this.api.bulkCreateGyms(rows, dryRun),
+  };
 
   async ngOnInit() {
     await this.reload();
@@ -371,94 +309,17 @@ export class AdminGymsComponent implements OnInit {
 
   toggleUpload() {
     this.showUpload.update(v => !v);
-    if (!this.showUpload()) this.resetUpload();
   }
 
-  resetUpload() {
-    this.fileName.set('');
-    this.parseError.set('');
-    this.preview.set(null);
-    this.imported.set(false);
-    this.pendingRows = [];
+  async onImported(result: BulkImportResult) {
+    const skipped = result.duplicates + result.invalid;
+    this.notice.set(
+      `Imported ${result.created} gym${result.created === 1 ? '' : 's'}` +
+      (skipped > 0 ? ` — ${skipped} row(s) skipped.` : '.'),
+    );
+    await this.reload();
   }
 
-  statusClass(status: BulkRowStatus) {
-    if (status === 'created' || status === 'valid') return 'status-pill-active';
-    if (status === 'duplicate') return 'status-pill-pending';
-    return 'status-pill-rejected';
-  }
-
-  downloadTemplate() {
-    const headers = [
-      'name', 'slug', 'description', 'city', 'location', 'address',
-      'price', 'email', 'phone', 'whatsapp', 'image',
-      'amenities', 'facilities', 'tags', 'featured', 'openNow',
-    ];
-    const sample = [
-      'Iron Beast Gym', 'iron-beast-gym', 'Premium facility with expert trainers.',
-      'Pune', 'Baner', '123 Fitness Ave, Baner, Pune 411045',
-      '3999', 'owner@ironbeast.com', '+91 98765 43210', '+919876543210',
-      'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800',
-      'Locker Rooms | Showers | Parking', 'Cardio Zone | Free Weights', 'CrossFit | Yoga',
-      'true', 'true',
-    ];
-    downloadCsv('ironfit-gym-import-template.csv', toCsv(headers, [sample]));
-  }
-
-  async onFileSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (!file) return;
-
-    this.resetUpload();
-    this.fileName.set(file.name);
-
-    try {
-      const text = await file.text();
-      const { rows, error } = parseCsvToObjects(text, HEADER_ALIASES);
-      if (error) { this.parseError.set(error); return; }
-
-      const missing = rows.findIndex(r => !r['name'] || !r['slug']);
-      if (rows.length === 0) { this.parseError.set('No data rows found'); return; }
-      if (!('name' in rows[0]) || !('slug' in rows[0])) {
-        this.parseError.set('The file needs at least a "name" and a "slug" column');
-        return;
-      }
-      void missing; // per-row problems are reported by the dry run, not here
-
-      this.pendingRows = rows.map(toGymPayload);
-
-      // Let the server judge the rows, so the preview uses exactly the same
-      // rules as the real import rather than a second copy that can drift.
-      this.preview.set(await this.api.bulkCreateGyms(this.pendingRows, true));
-    } catch (e: any) {
-      this.parseError.set(e?.message ?? 'Could not read that file.');
-    } finally {
-      // Lets the same file be re-selected after a fix.
-      input.value = '';
-    }
-  }
-
-  async runImport() {
-    this.importing.set(true);
-    this.error.set('');
-    try {
-      const result = await this.api.bulkCreateGyms(this.pendingRows, false);
-      this.preview.set(result);
-      this.imported.set(true);
-      this.notice.set(
-        `Imported ${result.created} gym${result.created === 1 ? '' : 's'}` +
-        (result.duplicates + result.invalid > 0
-          ? ` — ${result.duplicates + result.invalid} row(s) skipped.`
-          : '.'),
-      );
-      await this.reload();
-    } catch (e: any) {
-      this.error.set(e?.message ?? 'Import failed.');
-    } finally {
-      this.importing.set(false);
-    }
-  }
 
   private resetForm() {
     this.form = emptyForm();

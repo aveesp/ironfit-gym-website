@@ -3,7 +3,7 @@ import { environment } from '../../../environments/environment';
 import { FirebaseAuthService } from './firebase-auth.service';
 import {
   AdminStats, Booking, BookingStatus, BlogPost, CmsContent, CmsSectionName,
-  BulkGymResult, Gym, Nutritionist, Offer, Trainer, UserProfile, UserRole,
+  BulkImportResult, Gym, Nutritionist, Offer, Trainer, UserProfile, UserRole,
 } from '../models';
 
 /**
@@ -86,7 +86,7 @@ export class RoleApiService {
    * per-row outcomes without writing, which is what the preview step uses.
    */
   bulkCreateGyms(gyms: Record<string, unknown>[], dryRun = false) {
-    return this.request<BulkGymResult>('/gyms/bulk', {
+    return this.request<BulkImportResult>('/gyms/bulk', {
       method: 'POST',
       body: JSON.stringify({ gyms, dryRun }),
     });
@@ -125,6 +125,13 @@ export class RoleApiService {
     return this.request<Trainer[]>('/trainers/all');
   }
 
+  bulkCreateTrainers(trainers: Record<string, unknown>[], dryRun = false) {
+    return this.request<BulkImportResult>('/trainers/bulk', {
+      method: 'POST',
+      body: JSON.stringify({ trainers, dryRun }),
+    });
+  }
+
   createTrainer(trainer: Record<string, unknown>) {
     return this.request<Trainer>('/trainers', {
       method: 'POST',
@@ -144,6 +151,13 @@ export class RoleApiService {
   /** Everything, including deactivated profiles — the admin view. */
   getAllNutritionists() {
     return this.request<Nutritionist[]>('/nutritionists/all');
+  }
+
+  bulkCreateNutritionists(nutritionists: Record<string, unknown>[], dryRun = false) {
+    return this.request<BulkImportResult>('/nutritionists/bulk', {
+      method: 'POST',
+      body: JSON.stringify({ nutritionists, dryRun }),
+    });
   }
 
   createNutritionist(profile: Partial<Nutritionist> & { specializations?: string; certifications?: string; languages?: string }) {

@@ -176,10 +176,10 @@ export interface Nutritionist {
 }
 
 // ── Offers ──
-// ── Bulk gym import ──
+// ── Bulk spreadsheet import (gyms, trainers, nutritionists) ──
 export type BulkRowStatus = 'created' | 'valid' | 'duplicate' | 'invalid';
 
-export interface BulkGymRowResult {
+export interface BulkImportRowResult {
   /** Spreadsheet row number, so an error points at the line to fix. */
   row: number;
   name: string;
@@ -189,7 +189,7 @@ export interface BulkGymRowResult {
   id?: string;
 }
 
-export interface BulkGymResult {
+export interface BulkImportResult {
   dryRun: boolean;
   total: number;
   created: number;
@@ -197,7 +197,7 @@ export interface BulkGymResult {
   valid?: number;
   duplicates: number;
   invalid: number;
-  results: BulkGymRowResult[];
+  results: BulkImportRowResult[];
 }
 
 export type OfferType = 'percentage' | 'fixed';

@@ -1,7 +1,8 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RoleApiService } from '../../../core/services/role-api.service';
-import { Gym, Trainer } from '../../../core/models';
+import { BulkImportResult, Gym, Trainer } from '../../../core/models';
+import { BulkUploadComponent, BulkUploadConfig } from '../../../shared/components/bulk-upload/bulk-upload.component';
 
 const emptyForm = () => ({
   name: '', slug: '', title: '', photo: '', bio: '',
@@ -13,10 +14,59 @@ const emptyForm = () => ({
   gymIds: [] as string[],
 });
 
+
+/** Spreadsheet cells are all strings — turn them into the shapes the API wants. */
+function splitList(value: string): string[] {
+  // Pipes let a cell contain commas without needing quotes in the sheet.
+  return String(value ?? '').split(/[|,]/).map(v => v.trim()).filter(Boolean);
+}
+
+function toBool(value: string, fallback: boolean): boolean {
+  const v = String(value ?? '').trim().toLowerCase();
+  if (!v) return fallback;
+  return ['true', 'yes', 'y', '1'].includes(v);
+}
+
+function toTrainerPayload(row: Record<string, string>): Record<string, unknown> {
+  const payload: Record<string, unknown> = {
+    name: row['name'] ?? '',
+    slug: (row['slug'] ?? '').toLowerCase(),
+    title: row['title'] ?? '',
+    photo: row['photo'] ?? '',
+    bio: row['bio'] ?? '',
+    email: row['email'] ?? '',
+    phone: row['phone'] ?? '',
+    specializations: splitList(row['specializations']),
+    certifications: splitList(row['certifications']),
+    timings: splitList(row['timings']),
+    freelance: toBool(row['freelance'], false),
+  };
+  if (String(row['experience'] ?? '').trim()) payload['experience'] = Number(row['experience']);
+  // Left unset when blank so an in-house trainer does not show a ₹0/mo rate.
+  if (String(row['monthlyRate'] ?? '').trim()) payload['monthlyRate'] = Number(row['monthlyRate']);
+  return payload;
+}
+
+const HEADER_ALIASES: Record<string, string> = {
+  trainername: 'name', fullname: 'name',
+  url: 'slug', handle: 'slug',
+  role: 'title', designation: 'title',
+  contactemail: 'email', emailaddress: 'email',
+  contactphone: 'phone', phonenumber: 'phone', mobile: 'phone',
+  about: 'bio', description: 'bio',
+  years: 'experience', yearsofexperience: 'experience',
+  isfreelance: 'freelance',
+  rate: 'monthlyRate', monthlyrate: 'monthlyRate', fee: 'monthlyRate', monthlyfee: 'monthlyRate',
+  specialisations: 'specializations', skills: 'specializations',
+  certs: 'certifications',
+  availability: 'timings', schedule: 'timings',
+  photourl: 'photo', imageurl: 'photo',
+};
+
 @Component({
   selector: 'app-admin-trainers',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, BulkUploadComponent],
   template: `
     <header class="admin-page-head">
       <div class="flex flex-wrap items-start justify-between gap-4">
@@ -24,14 +74,25 @@ const emptyForm = () => ({
           <h1 class="admin-page-title">Trainer Management</h1>
           <p class="admin-page-sub">Onboard freelance trainers who work out of your partner gyms.</p>
         </div>
-        <button (click)="toggleForm()" class="btn-primary text-sm">
-          {{ showForm() ? 'Cancel' : '+ Onboard Trainer' }}
-        </button>
+        <div class="flex flex-wrap gap-3">
+          <button (click)="toggleUpload()" class="btn-secondary text-sm">
+            {{ showUpload() ? 'Cancel' : '⬆ Bulk Upload' }}
+          </button>
+          <button (click)="toggleForm()" class="btn-primary text-sm">
+            {{ showForm() ? 'Cancel' : '+ Onboard Trainer' }}
+          </button>
+        </div>
       </div>
     </header>
 
     @if (error()) { <div class="admin-error">{{ error() }}</div> }
     @if (notice()) { <div class="admin-notice">{{ notice() }}</div> }
+
+    @if (showUpload()) {
+      <app-bulk-upload [config]="uploadConfig"
+                       (completed)="onImported($event)"
+                       (failed)="error.set($event)" />
+    }
 
     <div class="admin-stat-grid mb-8">
       <div class="card p-5"><div class="admin-stat-value">{{ trainers().length }}</div><div class="admin-stat-label">Trainers</div></div>
@@ -219,6 +280,32 @@ export class AdminTrainersComponent implements OnInit {
   busy = signal<string | null>(null);
 
   showForm = signal(false);
+  showUpload = signal(false);
+
+  /** Everything the shared upload panel needs to import trainers. */
+  uploadConfig: BulkUploadConfig = {
+    label: 'trainers',
+    singular: 'trainer',
+    templateFile: 'ironfit-trainer-import-template.csv',
+    templateHeaders: ['name','slug','title','email','phone','bio','experience','freelance','monthlyRate','specializations','certifications','timings'],
+    templateSample: ['Kabir Sethi','kabir-sethi','Freelance Strength Coach','kabir@example.com','+91 90000 12345','Independent coach at partner gyms.','6','true','8000','Strength Training | Powerlifting','NASM-CPT','Mon-Fri 6am-10am | Sat 7am-11am'],
+    headerAliases: HEADER_ALIASES,
+    mapRow: toTrainerPayload,
+    submit: (rows, dryRun) => this.api.bulkCreateTrainers(rows, dryRun),
+  };
+
+  toggleUpload() {
+    this.showUpload.update(v => !v);
+  }
+
+  async onImported(result: BulkImportResult) {
+    const skipped = result.duplicates + result.invalid;
+    this.notice.set(
+      `Imported ${result.created} trainer${result.created === 1 ? '' : 's'}` +
+      (skipped > 0 ? ` — ${skipped} row(s) skipped.` : '.'),
+    );
+    await this.reload();
+  }
   saving = signal(false);
   form = emptyForm();
   slugTouched = false;
